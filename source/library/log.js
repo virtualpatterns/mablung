@@ -9,8 +9,8 @@ if (IsNode) {
 
   const Winston = require('winston')
 
-  const Path = require('./path').default
-  const Process = require('./process').default
+  const Path = require('./path')
+  const Process = require('./process')
 
   Log = Object.create(Winston)
 
@@ -192,11 +192,11 @@ Log.inspect = function (...parameters) {
 
   switch (parameters.length) {
     case 0:
-      break
+      // break
     case 1:
       level = 'debug'
       name = 'Log.inspect(...parameters) { ... }'
-      object = parameters[0]
+      object = parameters.length <= 0 ? undefined : parameters[0]
       depth = null
       break
     case 2:
@@ -224,7 +224,7 @@ Log.inspect = function (...parameters) {
     this.log(level, `- ${name}\n\n${object ? Utilities.inspect(object, {
       'depth': depth,
       'showHidden': true
-    }) : 'undefined'}\n`)
+    }) : object}\n`)
   }
 
 }

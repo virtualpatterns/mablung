@@ -18,11 +18,13 @@ before(() => {
 
   Log.clear()
   Log.addFile(LOG_PATH)
+  Log.line()
 
 })
 
 after(() => {
 
+  Log.line()
   Log.removeFile(LOG_PATH)
 
 })
@@ -34,6 +36,34 @@ describe('Log', () => {
   })
 
   describe('format', () => {
+
+    describe('(support with no parameters)', () => {
+
+      it('should support Log.format', () => {
+        Assert.doesNotThrow(() => Log.format())
+      })
+
+    })
+
+    describe('(call with no parameters)', () => {
+
+      before(() => {
+
+        Sinon.spy(Utilities, 'format')
+
+        Log.format()
+
+      })
+
+      it('should call Utilities.format', () => {
+        Assert.ok(Utilities.format.calledOnce)
+      })
+
+      after(() => {
+        Utilities.format.restore()
+      })
+
+    })
 
     describe('(support with an object)', () => {
 
@@ -220,7 +250,35 @@ describe('Log', () => {
 
   describe('inspect', () => {
 
-    describe('(support)', () => {
+    describe('(support with no parameters)', () => {
+
+      it('should support Log.inspect', () => {
+        Assert.doesNotThrow(() => Log.inspect())
+      })
+
+    })
+
+    describe('(call with no parameters)', () => {
+
+      before(() => {
+
+        Sinon.spy(Utilities, 'inspect')
+
+        Log.inspect()
+
+      })
+
+      it('should not call Utilities.inspect', () => {
+        Assert.equal(Utilities.inspect.called, 0)
+      })
+
+      after(() => {
+        Utilities.inspect.restore()
+      })
+
+    })
+
+    describe('(support with one parameter)', () => {
 
       it('should support Log.inspect', () => {
         Assert.doesNotThrow(() => Log.inspect({
@@ -230,12 +288,10 @@ describe('Log', () => {
 
     })
 
-    describe('(call)', () => {
+    describe('(call with one parameter)', () => {
 
       before(() => {
 
-        // Sinon.spy(Log, 'debug')
-        Sinon.spy(Log, 'inspect')
         Sinon.spy(Utilities, 'inspect')
 
         Log.inspect({
@@ -244,22 +300,160 @@ describe('Log', () => {
 
       })
 
-      // it('should call Log.debug', () => {
-      //   Assert.ok(Log.debug.calledOnce)
-      // })
+      it('should call Utilities.inspect', () => {
+        Assert.ok(Utilities.inspect.calledOnce)
+      })
+
+      after(() => {
+        Utilities.inspect.restore()
+      })
+
+    })
+
+    describe('(support with one string parameter)', () => {
+
+      it('should support Log.inspect', () => {
+        Assert.doesNotThrow(() => Log.inspect('Value'))
+      })
+
+    })
+
+    describe('(call with one string parameter)', () => {
+
+      before(() => {
+
+        Sinon.spy(Utilities, 'inspect')
+
+        Log.inspect('Value')
+
+      })
+
+      it('should not call Utilities.inspect', () => {
+        Assert.equal(Utilities.inspect.called, 0)
+      })
+
+      after(() => {
+        Utilities.inspect.restore()
+      })
+
+    })
+
+    describe('(support with two parameters)', () => {
+
+      it('should support Log.inspect', () => {
+        Assert.doesNotThrow(() => Log.inspect('object', {
+          'value': 0
+        }))
+      })
+
+    })
+
+    describe('(call with two parameters)', () => {
+
+      before(() => {
+
+        Sinon.spy(Utilities, 'inspect')
+
+        Log.inspect('object', {
+          'value': 0
+        })
+
+      })
 
       it('should call Utilities.inspect', () => {
         Assert.ok(Utilities.inspect.calledOnce)
       })
 
-      // it('should return Log', () => {
-      //   Assert.ok(Log.inspect.returned(Log))
-      // })
+      after(() => {
+        Utilities.inspect.restore()
+      })
+
+    })
+
+    describe('(support with three parameters)', () => {
+
+      it('should support Log.inspect', () => {
+        Assert.doesNotThrow(() => Log.inspect('object', {
+          'value': 0,
+          'object': {
+            'value': 0,
+            'object': {
+              'value': 0
+            }
+          }
+        }, 1))
+      })
+
+    })
+
+    describe('(call with three parameters)', () => {
+
+      before(() => {
+
+        Sinon.spy(Utilities, 'inspect')
+
+        Log.inspect('object', {
+          'value': 0,
+          'object': {
+            'value': 0,
+            'object': {
+              'value': 0
+            }
+          }
+        }, 1)
+
+      })
+
+      it('should call Utilities.inspect', () => {
+        Assert.ok(Utilities.inspect.calledOnce)
+      })
 
       after(() => {
         Utilities.inspect.restore()
-        Log.inspect.restore()
-        // Log.debug.restore()
+      })
+
+    })
+
+    describe('(support with four parameters)', () => {
+
+      it('should support Log.inspect', () => {
+        Assert.doesNotThrow(() => Log.inspect('warn', 'object', {
+          'value': 0,
+          'object': {
+            'value': 0,
+            'object': {
+              'value': 0
+            }
+          }
+        }, 1))
+      })
+
+    })
+
+    describe('(call with four parameters)', () => {
+
+      before(() => {
+
+        Sinon.spy(Utilities, 'inspect')
+
+        Log.inspect('warn', 'object', {
+          'value': 0,
+          'object': {
+            'value': 0,
+            'object': {
+              'value': 0
+            }
+          }
+        }, 1)
+
+      })
+
+      it('should call Utilities.inspect', () => {
+        Assert.ok(Utilities.inspect.calledOnce)
+      })
+
+      after(() => {
+        Utilities.inspect.restore()
       })
 
     })
