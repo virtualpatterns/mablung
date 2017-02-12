@@ -203,7 +203,7 @@ describe('Process', () => {
       it('should create the file with a valid pid', () => {
         FileSystem.readFile(PID_PATH, {
           encoding: 'utf-8'
-        }, (pid) => Assert.equal(pid, process.pid))
+        }, (pid) => Assert.equal(pid, Process.pid))
       })
 
       it('should fail if the file exists', () => {

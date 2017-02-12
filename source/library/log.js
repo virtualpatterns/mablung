@@ -3,20 +3,18 @@ import IsNode from 'detect-node'
 import Pad from 'pad'
 import Utilities from 'util'
 
-// Will break webpack/browser
-// import Path from './path'
-
 let Log = null
 
 if (IsNode) {
 
   const Winston = require('winston')
 
+  const Path = require('./path').default
+  const Process = require('./process').default
+
   Log = Object.create(Winston)
 
   Log.format = function (...parameters) {
-
-    const Process = require('./process')
 
     let options = null
 
@@ -76,9 +74,7 @@ if (IsNode) {
       'timestamp': true
     })
 
-    // Will break webpack/browser
-    // this.debug(`- Log.addFile('${Path.trim(path)}', '${level}') { ... }`)
-    this.debug(`- Log.addFile('${path}', '${level}') { ... }`)
+    this.debug(`- Log.addFile('${Path.trim(path)}', '${level}') { ... }`)
 
   }
 
