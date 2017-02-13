@@ -2,7 +2,7 @@
   "author": "virtualpatterns.com <code@virtualpatterns.com> (http://www.virtualpatterns.com)",
   "description": "TBD",
   "license": "ISC",
-  "main": "library/index.js",
+  "main": "index.js",
   "name": "mablung",
   "repository": {
     "type": "git",
@@ -19,7 +19,7 @@
     "coverage-library": "npm run build && istanbul cover ./node_modules/.bin/_mocha --dir ./coverage -- --bail --timeout 0 ./tests",
     "run": "npm run build && node server/index.js"
   },
-  "version": "0.0.3",
+  "version": "0.0.4",
   "devDependencies": {
     "babel-cli": "^6.22.2",
     "babel-plugin-add-module-exports": "^0.2.1",
