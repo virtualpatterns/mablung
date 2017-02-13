@@ -224,7 +224,7 @@ Log.inspect = function (...parameters) {
     this.log(level, `- ${name}\n\n${object ? Utilities.inspect(object, {
       'depth': depth,
       'showHidden': true
-    }) : object}\n`)
+    }) : object}\n${IsNode ? '' : '\n'}`)
   }
 
 }
