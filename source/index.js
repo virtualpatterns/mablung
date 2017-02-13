@@ -1,11 +1,22 @@
-import FileSystem from './library/file-system'
-import Log from './library/log'
-import Path from './library/path'
-import Process from './library/process'
+import IsNode from 'detect-node'
 
-export default {
-  FileSystem,
-  Log,
-  Path,
-  Process
+let index = null
+
+if (IsNode) {
+
+  index = {
+    'FileSystem': require('./library/file-system'),
+    'Log': require('./library/log'),
+    'Path': require('./library/path'),
+    'Process': require('./library/process')
+  }
+
+} else {
+
+  index = {
+    'Log': require('./library/log')
+  }
+
 }
+
+export default index

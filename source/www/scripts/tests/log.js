@@ -1,4 +1,4 @@
-import Log from '../../../library/log'
+import { Log } from '../../../index'
 
 describe('Log', () => {
 

@@ -21,6 +21,10 @@ module.exports = {
   'module': {
     'loaders': []
   },
+  'node': {
+    'fs': 'empty',
+    'process': 'mock'
+  },
   'output': {
     'filename': '[name].js',
     'path': Path.join(__dirname, 'www', 'scripts', 'bundles')
