@@ -14,9 +14,9 @@ const PIDS_PATH = Path.join(__dirname, '..', 'process', 'pids')
 
 const PID_PATH = Path.join(PIDS_PATH, `${Package.name}.mocha.pid`)
 
-const MODULE_PATH = Path.join(__dirname, 'resources', `process.killPID.js`)
-const MODULE_LOG_PATH = Path.join(LOGS_PATH, `process.killPID.log`)
-const MODULE_PID_PATH = Path.join(PIDS_PATH, `process.killPID.pid`)
+const MODULE_PATH = Path.join(__dirname, 'resources', 'process.killPID.js')
+const MODULE_LOG_PATH = Path.join(LOGS_PATH, 'process.killPID.log')
+const MODULE_PID_PATH = Path.join(PIDS_PATH, 'process.killPID.pid')
 
 describe('Process', () => {
 
@@ -44,7 +44,7 @@ describe('Process', () => {
       it('should reject the promise', (callback) => {
         Process.when(250, 1000, (callback) => callback(true))
           .then(() => callback(new Error()))
-          .catch((error) => callback())
+          .catch(() => callback())
       })
 
     })
@@ -298,14 +298,12 @@ describe('Process', () => {
 
     describe('(when the file exists and contains a valid pid)', () => {
 
-      let childProcess = null
-
       before((callback) => {
 
         Promise.resolve()
           .then(() => FileSystem.Promise.accessUnlink(MODULE_PID_PATH, FileSystem.F_OK))
           .then(() => {
-            childProcess = ChildProcess.fork(MODULE_PATH, [
+            ChildProcess.fork(MODULE_PATH, [
               '--logPath',
               MODULE_LOG_PATH,
               '--pidPath',

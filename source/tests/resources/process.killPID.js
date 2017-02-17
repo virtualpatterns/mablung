@@ -3,7 +3,6 @@ import Utilities from 'util'
 
 import Log from '../../library/log'
 import Package from '../../package.json'
-import Path from '../../library/path'
 import Process from '../../library/process'
 
 Command
@@ -28,14 +27,14 @@ if (Command.logPath &&
   })
 
   Process.once('SIGINT', () => {
-    Log.debug('- Process.once(\'SIGINT\', () => { ... })');
+    Log.debug('- Process.once(\'SIGINT\', () => { ... })')
     Log.debug('--------------------------------------------------------------------------------')
     Log.removeFile(Command.logPath)
-    Process.exit(2);
-  });
+    Process.exit(2)
+  })
 
-  function wait(start) {
-    Log.debug(`- wait(${start.toISOString()}) ${(new Date()) - start}ms`);
+  const wait = function (start) {
+    Log.debug(`- wait(${start.toISOString()}) ${(new Date()) - start}ms`)
     setTimeout(() => wait(start), 60000)
   }
 

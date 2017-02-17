@@ -1,5 +1,3 @@
-import Promisify from 'es6-promisify'
-
 import FileSystem from '../library/file-system'
 import Package from '../package.json'
 import Path from '../library/path'
@@ -22,7 +20,7 @@ describe('FileSystem', () => {
         Promise.resolve()
           .then(() => FileSystem.Promise.access(FILE_PATH, FileSystem.F_OK)
               .then(() => FileSystem.Promise.unlink(FILE_PATH))
-              .catch((error) => Promise.resolve()))
+              .catch(() => Promise.resolve()))
           .then(() => FileSystem.Promise.writeFile(FILE_PATH, Process.pid, {
             encoding: 'utf-8'
           }))
@@ -35,7 +33,7 @@ describe('FileSystem', () => {
       it('should delete a file', (callback) => {
         FileSystem.Promise.access(FILE_PATH, FileSystem.F_OK)
           .then(() => callback(new Error(`The file ${Path.trim(FILE_PATH)} exists.`)))
-          .catch((error) => callback())
+          .catch(() => callback())
       })
 
     })
@@ -47,7 +45,7 @@ describe('FileSystem', () => {
         Promise.resolve()
           .then(() => FileSystem.Promise.access(FILE_PATH, FileSystem.F_OK)
               .then(() => FileSystem.Promise.unlink(FILE_PATH))
-              .catch((error) => Promise.resolve()))
+              .catch(() => Promise.resolve()))
           .then(() => callback())
           .catch((error) => callback(error))
 
@@ -98,7 +96,7 @@ describe('FileSystem', () => {
       it('should reject the promise', (callback) => {
         FileSystem.whenFileExists(250, 1000, FILE_PATH)
           .then(() => callback(new Error(`The file ${Path.trim(FILE_PATH)} exists.`)))
-          .catch((error) => callback())
+          .catch(() => callback())
       })
 
     })
@@ -138,7 +136,7 @@ describe('FileSystem', () => {
       it('should reject the promise', (callback) => {
         FileSystem.whenFileNotExists(250, 1000, FILE_PATH)
           .then(() => callback(new Error(`The file ${Path.trim(FILE_PATH)} doesn\'t exist.`)))
-          .catch((error) => callback())
+          .catch(() => callback())
       })
 
       after((callback) => {

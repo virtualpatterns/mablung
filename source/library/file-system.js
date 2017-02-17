@@ -8,7 +8,6 @@ import Path from './path'
 import Process from './process'
 
 import ArgumentError from './errors/argument-error'
-import ProcessError from './errors/process-error'
 
 const FileSystem = Object.create(_FileSystem)
 

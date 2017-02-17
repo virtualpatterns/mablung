@@ -78,7 +78,9 @@ Process.createPID = function (path) {
       try {
         FileSystem.accessSync(path, FileSystem.F_OK)
         FileSystem.unlinkSync(path)
-      } catch (error) {}
+      } catch (error) {
+        // Do nothing
+      }
     })
 
   }
