@@ -163,6 +163,21 @@ describe('Log', () => {
 
     })
 
+    // describe('(support twice)', () => {
+    //
+    //   it('should support Log.addConsole called twice', () => {
+    //     Assert.doesNotThrow(() => {
+    //       Log.addConsole()
+    //       Log.addConsole()
+    //     })
+    //   })
+    //
+    //   after(() => {
+    //     Log.removeConsole()
+    //   })
+    //
+    // })
+
     describe('(call)', () => {
 
       before(() => {
@@ -212,6 +227,21 @@ describe('Log', () => {
       })
 
     })
+
+    // describe('(support twice)', () => {
+    //
+    //   before(() => {
+    //     Log.addConsole()
+    //   })
+    //
+    //   it('should not support Log.removeConsole called twice', () => {
+    //     Assert.throws(() => {
+    //       Log.removeConsole()
+    //       Log.removeConsole()
+    //     })
+    //   })
+    //
+    // })
 
     describe('(call)', () => {
 

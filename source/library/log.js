@@ -49,13 +49,22 @@ if (IsNode) {
 
   Log.addConsole = function (level = 'debug') {
 
-    this.add(Winston.transports.Console, {
-      'formatter': this.format,
-      'level': level,
-      'timestamp': true
-    })
+    // try {
 
-    this.debug(`- Log.addConsole('${level}') { ... }`)
+      this.add(Winston.transports.Console, {
+        'formatter': this.format,
+        'level': level,
+        'timestamp': true
+      })
+
+      this.debug(`- Log.addConsole('${level}') { ... }`)
+
+    // }
+    // catch (error) {
+    //   this.error(`- Log.addConsole('${level}') { ... }`)
+    //   this.error('-   error.message=%j', error.message)
+    //   this.error('-   error.stack ...\n\n%s\n\n', error.stack)
+    // }
 
   }
 
@@ -65,16 +74,25 @@ if (IsNode) {
 
   Log.addFile = function (path, level = 'debug') {
 
-    this.add(Winston.transports.File, {
-      'name': path,
-      'filename': path,
-      'formatter': this.format,
-      'json': false,
-      'level': level,
-      'timestamp': true
-    })
+    // try {
 
-    this.debug(`- Log.addFile('${Path.trim(path)}', '${level}') { ... }`)
+      this.add(Winston.transports.File, {
+        'name': path,
+        'filename': path,
+        'formatter': this.format,
+        'json': false,
+        'level': level,
+        'timestamp': true
+      })
+
+      this.debug(`- Log.addFile('${Path.trim(path)}', '${level}') { ... }`)
+
+    // }
+    // catch (error) {
+    //   this.error(`- Log.addFile('${Path.trim(path)}', '${level}') { ... }`)
+    //   this.error('-   error.message=%j', error.message)
+    //   this.error('-   error.stack ...\n\n%s\n\n', error.stack)
+    // }
 
   }
 
@@ -82,7 +100,8 @@ if (IsNode) {
     this.remove(path)
   }
 
-  // Log.clear()
+  Log.clear()
+  // console.log('Log.clear()')
 
 } else {
 
@@ -133,8 +152,8 @@ if (IsNode) {
 
       let error = parameters[0]
 
-      Log.log(level, '-   error.message=%j', error.message)
-      Log.log(level, '-   error.stack ...\n\n%s\n\n', error.stack)
+      this.log(level, '-   error.message=%j', error.message)
+      this.log(level, '-   error.stack ...\n\n%s\n\n', error.stack)
 
     }
     else {
