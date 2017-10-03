@@ -11,8 +11,8 @@
   "scripts": {
     "link": "hln ./process/logs \"$HOME/Library/Logs/mablung\"",
     "unlink": "hln -u \"$HOME/Library/Logs/mablung\"",
+    "upgrade": "npm-check-updates --upgrade",
     "clean": "rm -rf ./coverage ./library ./server ./tests ./www",
-    "update": "npm-check-updates",
     "lint": "eslint ./resources ./source",
     "build": "npm run clean && babel ./source --copy-files --out-dir . && webpack",
     "test": "npm run test-library && npm run test-www",
@@ -21,7 +21,7 @@
     "coverage-library": "npm run build && istanbul cover ./node_modules/.bin/_mocha --dir ./coverage -- --bail --timeout 0 ./tests",
     "run": "npm run build && node server/index.js"
   },
-  "version": "0.0.9",
+  "version": "0.0.10",
   "devDependencies": {
     "babel-cli": "^6.23.0",
     "babel-plugin-add-module-exports": "^0.2.1",

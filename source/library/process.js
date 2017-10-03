@@ -110,7 +110,7 @@ Process.killPID = function (path, signal = 'SIGINT') {
 
 Process.exit = function (code = 0) {
 
-  Log.debug('> Process.exit(%d) ...', code)
+  Log.debug('- Process.exit(%d) ...', code)
 
   setTimeout(() => process.exit(code), EXIT_TIMEOUT)
 
@@ -118,5 +118,4 @@ Process.exit = function (code = 0) {
 
 }
 
-// module.exports = Process
 export default Process
