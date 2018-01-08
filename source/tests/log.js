@@ -125,7 +125,7 @@ describe('Log', () => {
     describe('(support with multiple arguments)', () => {
 
       it('should support Log.format', () => {
-        Assert.doesNotThrow(() => Log.format('message $d %d', 1, 2))
+        Assert.doesNotThrow(() => Log.format('message %d %d', 1, 2))
       })
 
     })
@@ -134,15 +134,108 @@ describe('Log', () => {
 
       before(() => {
         Sinon.spy(Utilities, 'format')
-        Log.format('message $d %d', 1, 2)
+        Log.format('message %d %d', 1, 2)
       })
 
       it('should call Utilities.format', () => {
-        Assert.equal(Utilities.format.callCount, 2)
+        Assert.ok(Utilities.format.calledTwice)
       })
 
       after(() => {
         Utilities.format.restore()
+      })
+
+    })
+
+  })
+
+  describe('error', () => {
+
+    describe('(support with no parameters)', () => {
+
+      it('should support Log.error', () => {
+        Assert.doesNotThrow(() => Log.error())
+      })
+
+    })
+
+    describe('(call with no parameters)', () => {
+
+      before(() => {
+
+        Sinon.spy(Log, 'log')
+
+        Log.error()
+
+      })
+
+      it('should call Log.log', () => {
+        Assert.ok(Log.log.calledOnce)
+      })
+
+      after(() => {
+        Log.log.restore()
+      })
+
+    })
+
+    describe('(support with an Error)', () => {
+
+      it('should support Log.error', () => {
+        Assert.doesNotThrow(() => Log.error(new Error('Error')))
+      })
+
+    })
+
+    describe('(call with an Error)', () => {
+
+      before(() => {
+
+        Sinon.spy(Log, 'log')
+
+        Log.error(new Error('Error'))
+
+      })
+
+      it('should call Log.log twice', () => {
+        Assert.ok(Log.log.calledTwice)
+      })
+
+      it('should call Log.log with \'error.message\'', () => {
+        Assert.ok(Log.log.firstCall.calledWith('error', '-   error.message=\'Error\''))
+      })
+
+      it('should call Log.log with \'error.stack\'', () => {
+        Assert.ok(Log.log.secondCall.calledWithMatch('error', /\- {3}error\.stack \.{3}.*/))
+      })
+
+      after(() => {
+        Log.log.restore()
+      })
+
+    })
+
+    describe('(support with multiple arguments)', () => {
+
+      it('should support Log.format', () => {
+        Assert.doesNotThrow(() => Log.error('message %d %d', 1, 2))
+      })
+
+    })
+
+    describe('(call with multiple arguments)', () => {
+
+      before(() => {
+        Sinon.spy(Log, 'log')
+        Log.error('message %d %d', 1, 2)
+      })
+
+      it('should call Log.log', () => {
+        Assert.ok(Log.log.calledOnce)
+      })
+
+      after(() => {
+        Log.log.restore()
       })
 
     })

@@ -9,6 +9,7 @@
 /process
 /sandbox
 /server
+/source/sandbox
 /tests
 /www
 /webpack.config.js

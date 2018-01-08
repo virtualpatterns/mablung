@@ -11,8 +11,8 @@
   "scripts": {
     "link": "hln ./process/logs \"$HOME/Library/Logs/mablung\"",
     "unlink": "hln -u \"$HOME/Library/Logs/mablung\"",
+    "upgrade": "npm-check-updates --upgrade",
     "clean": "rm -rf ./coverage ./library ./server ./tests ./www",
-    "update": "npm-check-updates",
     "lint": "eslint ./resources ./source",
     "build": "npm run clean && babel ./source --copy-files --out-dir . && webpack",
     "test": "npm run test-library && npm run test-www",

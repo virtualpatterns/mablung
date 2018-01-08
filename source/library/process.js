@@ -100,6 +100,7 @@ Process.killPID = function (path, signal = 'SIGINT') {
     })
 
     process.kill(pid, signal)
+
   } else {
     throw new ArgumentError(`The path ${ Path.trim(path) } does not exist.`)
   }
@@ -118,5 +119,4 @@ Process.exit = function (code = 0) {
 
 }
 
-// module.exports = Process
 export default Process

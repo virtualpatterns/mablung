@@ -47,24 +47,32 @@ if (IsNode) {
 
   }
 
+  Log.error = function (...parameters) {
+
+    if (parameters.length > 0 &&
+        parameters[0] instanceof Error) {
+
+      let error = parameters[0]
+
+      this.log('error', `-   error.message='${error.message}'`)
+      this.log('error', `-   error.stack ...\n\n${error.stack}\n` )
+
+    } else {
+      parameters.unshift('error')
+      this.log.apply(this, parameters)
+    }
+
+  }
+
   Log.addConsole = function (level = 'debug') {
 
-    // try {
+    this.add(Winston.transports.Console, {
+      'formatter': this.format,
+      'level': level,
+      'timestamp': true
+    })
 
-      this.add(Winston.transports.Console, {
-        'formatter': this.format,
-        'level': level,
-        'timestamp': true
-      })
-
-      this.debug(`- Log.addConsole('${level}') { ... }`)
-
-    // }
-    // catch (error) {
-    //   this.error(`- Log.addConsole('${level}') { ... }`)
-    //   this.error('-   error.message=%j', error.message)
-    //   this.error('-   error.stack ...\n\n%s\n\n', error.stack)
-    // }
+    this.debug(`- Log.addConsole('${level}') { ... }`)
 
   }
 
@@ -74,25 +82,16 @@ if (IsNode) {
 
   Log.addFile = function (path, level = 'debug') {
 
-    // try {
+    this.add(Winston.transports.File, {
+      'name': path,
+      'filename': path,
+      'formatter': this.format,
+      'json': false,
+      'level': level,
+      'timestamp': true
+    })
 
-      this.add(Winston.transports.File, {
-        'name': path,
-        'filename': path,
-        'formatter': this.format,
-        'json': false,
-        'level': level,
-        'timestamp': true
-      })
-
-      this.debug(`- Log.addFile('${Path.trim(path)}', '${level}') { ... }`)
-
-    // }
-    // catch (error) {
-    //   this.error(`- Log.addFile('${Path.trim(path)}', '${level}') { ... }`)
-    //   this.error('-   error.message=%j', error.message)
-    //   this.error('-   error.stack ...\n\n%s\n\n', error.stack)
-    // }
+    this.debug(`- Log.addFile('${Path.trim(path)}', '${level}') { ... }`)
 
   }
 
@@ -101,7 +100,6 @@ if (IsNode) {
   }
 
   Log.clear()
-  // console.log('Log.clear()')
 
 } else {
 
@@ -112,28 +110,24 @@ if (IsNode) {
     let level = parameters.shift().toUpperCase()
     let levelFn = null
 
-    if (window.callPhantom) {
-      levelFn = this.logPhantom.bind(this)
-    } else {
-      switch (level) {
-        case 'LOG':
-          levelFn = console.log.bind(console)
-          break
-        case 'ERROR':
-          levelFn = console.error.bind(console)
-          break
-        case 'WARN':
-          levelFn = console.warn.bind(console)
-          break
-        case 'INFO':
-          levelFn = console.info.bind(console)
-          break
-        case 'DEBUG':
-          levelFn = console.debug.bind(console)
-          break
-        default:
-          levelFn = console.log.bind(console)
-      }
+    switch (level) {
+      case 'LOG':
+        levelFn = console.log.bind(console)
+        break
+      case 'ERROR':
+        levelFn = console.error.bind(console)
+        break
+      case 'WARN':
+        levelFn = console.warn.bind(console)
+        break
+      case 'INFO':
+        levelFn = console.info.bind(console)
+        break
+      case 'DEBUG':
+        levelFn = console.debug.bind(console)
+        break
+      default:
+        levelFn = console.log.bind(console)
     }
 
     if (Is.string(parameters[0])) {
@@ -152,8 +146,8 @@ if (IsNode) {
 
       let error = parameters[0]
 
-      this.log(level, '-   error.message=%j', error.message)
-      this.log(level, '-   error.stack ...\n\n%s\n\n', error.stack)
+      this.log(level, `-   error.message='${error.message}'`)
+      this.log(level, `-   error.stack ...\n\n${error.stack}\n\n` )
 
     }
     else {
@@ -172,12 +166,6 @@ if (IsNode) {
 
     }
 
-  }
-
-  Log.logPhantom = function(message) {
-    window.callPhantom({
-      'message': message
-    })
   }
 
   Log.error = function(...parameters) {
@@ -238,9 +226,9 @@ Log.inspect = function (...parameters) {
   }
 
   if (Is.string(object)) {
-    this.log(level, `- ${name}\n\n${object}\n`)
+    this.log(level, `-   ${name} ...\n\n${object}\n`)
   } else {
-    this.log(level, `- ${name}\n\n${object ? Utilities.inspect(object, {
+    this.log(level, `-   ${name} ...\n\n${object ? Utilities.inspect(object, {
       'depth': depth,
       'showHidden': true
     }) : object}\n${IsNode ? '' : '\n'}`)
@@ -252,5 +240,4 @@ Log.line = function (level = 'debug') {
   this.log(level, '-'.repeat(80))
 }
 
-// module.exports = Log
 export default Log
