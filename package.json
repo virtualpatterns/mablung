@@ -21,7 +21,7 @@
     "coverage-library": "npm run build && istanbul cover ./node_modules/.bin/_mocha --dir ./coverage -- --bail --timeout 0 ./tests",
     "run": "npm run build && node server/index.js"
   },
-  "version": "0.0.9",
+  "version": "0.0.10",
   "devDependencies": {
     "babel-cli": "^6.23.0",
     "babel-plugin-add-module-exports": "^0.2.1",
