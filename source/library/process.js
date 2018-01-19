@@ -1,17 +1,18 @@
-import FileSystem from './file-system'
-import Log from './log'
+import FileSystem from 'fs' // require('./file-system')
+
+import Configuration from '../configuration'
 import Path from './path'
 
 import ArgumentError from './errors/argument-error'
 import ProcessError from './errors/process-error'
 
-const EXIT_TIMEOUT = 5000
-
 const Process = Object.create(process)
 
 Process.when = function (timeout, maximumDuration, testFn) {
 
-  Log.debug('> Process.when(%d, %d, testFn) { ... }', timeout, maximumDuration)
+  // const Log = require('./log').Log
+
+  // Log.debug(`Process.when(${timeout}, ${maximumDuration}, testFn) { ... }`)
 
   return new Promise((resolve, reject) => {
 
@@ -19,14 +20,12 @@ Process.when = function (timeout, maximumDuration, testFn) {
 
       let duration = new Date() - start
 
-      testFn(error => {
+      testFn((error) => {
         if (error && duration < maximumDuration) {
           setTimeout(() => waitLoop(start), timeout)
         } else if (duration >= maximumDuration) {
-          Log.error('< Process.when(%d, %d, testFn) { ... } duration=%d', timeout, maximumDuration, duration)
           reject(new ProcessError('The duration was exceeded.'))
         } else {
-          Log.debug('< Process.when(%d, %d, testFn) { ... }', timeout, maximumDuration)
           resolve()
         }
       })
@@ -63,10 +62,14 @@ Process.existsPID = function (path) {
 
 Process.createPID = function (path) {
 
-  Log.debug('- Process.createPID(%j)', Path.trim(path))
+  // const FileSystem = require('fs') // require('./file-system')
+  // const Log = require('./log').Log
+  // const Path = require('./path')
+
+  // Log.debug(`Process.createPID('${Path.trim(path)}')`)
 
   if (this.existsPID(path)) {
-    throw new ArgumentError(`The path ${ Path.trim(path) } exists.`)
+    throw new ArgumentError(`The path '${Path.trim(path)}' exists.`)
   } else {
 
     FileSystem.writeFileSync(path, process.pid, {
@@ -74,7 +77,6 @@ Process.createPID = function (path) {
     })
 
     Process.on('exit', () => {
-      console.log(Log.format('DEBUG', '- Process.on(\'exit\', function() { ... }'))
       try {
         FileSystem.accessSync(path, FileSystem.F_OK)
         FileSystem.unlinkSync(path)
@@ -91,7 +93,11 @@ Process.createPID = function (path) {
 
 Process.killPID = function (path, signal = 'SIGINT') {
 
-  Log.debug('- Process.killPID(%j, %j)', Path.trim(path), signal)
+  // const FileSystem = require('fs') // require('./file-system')
+  // const Log = require('./log').Log
+  // const Path = require('./path')
+
+  // Log.debug(`Process.killPID('${Path.trim(path)}', ${signal})`)
 
   if (this.existsPID(path)) {
 
@@ -102,7 +108,7 @@ Process.killPID = function (path, signal = 'SIGINT') {
     process.kill(pid, signal)
 
   } else {
-    throw new ArgumentError(`The path ${ Path.trim(path) } does not exist.`)
+    throw new ArgumentError(`The path '${Path.trim(path)}' does not exist.`)
   }
 
   return this
@@ -111,9 +117,11 @@ Process.killPID = function (path, signal = 'SIGINT') {
 
 Process.exit = function (code = 0) {
 
-  Log.debug('> Process.exit(%d) ...', code)
+  // const Log = require('./log').Log
 
-  setTimeout(() => process.exit(code), EXIT_TIMEOUT)
+  // Log.debug(`Process.exit(${code})`, )
+
+  setTimeout(() => process.exit(code), Configuration.process.timeouts.exit)
 
   return this
 

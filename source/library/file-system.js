@@ -3,7 +3,6 @@ import _FileSystem from 'fs'
 import Promisify from 'es6-promisify'
 import Touch from 'touch'
 
-import Log from './log'
 import Path from './path'
 import Process from './process'
 
@@ -15,7 +14,7 @@ FileSystem.mkdirp = Directory
 FileSystem.touch = Touch
 
 FileSystem.accessUnlink = function (path, mode, callback) {
-  FileSystem.access(path, mode, error => {
+  FileSystem.access(path, mode, (error) => {
     if (error) {
       callback()
     } else {
@@ -26,22 +25,32 @@ FileSystem.accessUnlink = function (path, mode, callback) {
 
 FileSystem.whenFileExists = function (timeout, maximumDuration, path) {
 
-  Log.debug('- FileSystem.whenFileExists(%d, %d, %j) { ... }', timeout, maximumDuration, Path.trim(path))
+  // const Log = require('./log').Log
+  // const Path = require('./path')
+  // const Process = require('./process')
 
-  return Process.when(timeout, maximumDuration, callback => FileSystem.access(path, FileSystem.F_OK, callback))
+  // console.log(`Path.trim=${Path.trim}`) // eslint-disable-line no-console
+
+  // Log.debug(`FileSystem.whenFileExists(${timeout}, ${maximumDuration}, '${Path.trim(path)}') { ... }`)
+
+  return Process.when(timeout, maximumDuration, (callback) => FileSystem.access(path, FileSystem.F_OK, callback))
 
 }
 
 FileSystem.whenFileNotExists = function (timeout, maximumDuration, path) {
 
-  Log.debug('- FileSystem.whenFileNotExists(%d, %d, %j) { ... }', timeout, maximumDuration, Path.trim(path))
+  // const Log = require('./log').Log
+  // const Path = require('./path')
+  // const Process = require('./process')
 
-  return Process.when(timeout, maximumDuration, callback => {
-    FileSystem.access(path, FileSystem.F_OK, error => {
+  // Log.debug(`FileSystem.whenFileNotExists(${timeout}, ${maximumDuration}, '${Path.trim(path)}') { ... }`)
+
+  return Process.when(timeout, maximumDuration, (callback) => {
+    FileSystem.access(path, FileSystem.F_OK, (error) => {
       if (error) {
         callback()
       } else {
-        callback(new ArgumentError(`The file ${ Path.trim(path) } exists.`))
+        callback(new ArgumentError(`The file '${Path.trim(path)}' exists.`))
       }
     })
   })
@@ -57,5 +66,4 @@ FileSystem.Promise.touch = Promisify(FileSystem.touch)
 FileSystem.Promise.unlink = Promisify(FileSystem.unlink)
 FileSystem.Promise.writeFile = Promisify(FileSystem.writeFile)
 
-// module.exports = FileSystem
 export default FileSystem

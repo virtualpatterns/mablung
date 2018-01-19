@@ -1,0 +1,9 @@
+'use strict';
+
+var _index = require('../index');
+
+_index.Log.createFormattedLog();
+
+_index.Log.debug('process.pid=' + process.pid);
+_index.Log.debug('Process.pid=' + _index.Process.pid);
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi4uLy4uL3NvdXJjZS9zYW5kYm94L3BpZGllLmpzIl0sIm5hbWVzIjpbImNyZWF0ZUZvcm1hdHRlZExvZyIsImRlYnVnIiwicHJvY2VzcyIsInBpZCJdLCJtYXBwaW5ncyI6Ijs7QUFBQTs7QUFFQSxXQUFJQSxrQkFBSjs7QUFFQSxXQUFJQyxLQUFKLGtCQUF5QkMsUUFBUUMsR0FBakM7QUFDQSxXQUFJRixLQUFKLGtCQUF5QixlQUFRRSxHQUFqQyIsImZpbGUiOiJwaWRpZS5qcyIsInNvdXJjZXNDb250ZW50IjpbImltcG9ydCB7IExvZywgUHJvY2VzcyB9IGZyb20gJy4uL2luZGV4J1xuXG5Mb2cuY3JlYXRlRm9ybWF0dGVkTG9nKClcblxuTG9nLmRlYnVnKGBwcm9jZXNzLnBpZD0ke3Byb2Nlc3MucGlkfWApXG5Mb2cuZGVidWcoYFByb2Nlc3MucGlkPSR7UHJvY2Vzcy5waWR9YClcbiJdfQ==
