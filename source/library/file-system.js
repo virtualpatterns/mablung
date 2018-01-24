@@ -57,13 +57,12 @@ FileSystem.whenFileNotExists = function (timeout, maximumDuration, path) {
 
 }
 
-FileSystem.Promise = {}
-FileSystem.Promise.access = Promisify(FileSystem.access)
-FileSystem.Promise.accessUnlink = Promisify(FileSystem.accessUnlink)
-FileSystem.Promise.mkdirp = Promisify(FileSystem.mkdirp)
-FileSystem.Promise.readFile = Promisify(FileSystem.readFile)
-FileSystem.Promise.touch = Promisify(FileSystem.touch)
-FileSystem.Promise.unlink = Promisify(FileSystem.unlink)
-FileSystem.Promise.writeFile = Promisify(FileSystem.writeFile)
+FileSystem.promisedAccess = Promisify(FileSystem.access)
+FileSystem.promisedAccessUnlink = Promisify(FileSystem.accessUnlink)
+FileSystem.promisedMkdirP = Promisify(FileSystem.mkdirp)
+FileSystem.promisedReadFile = Promisify(FileSystem.readFile)
+FileSystem.promisedTouch = Promisify(FileSystem.touch)
+FileSystem.promisedUnlink = Promisify(FileSystem.unlink)
+FileSystem.promisedWriteFile = Promisify(FileSystem.writeFile)
 
 export default FileSystem

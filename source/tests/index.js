@@ -1,18 +1,21 @@
 import 'babel-polyfill'
 
-import { Log, Logger } from '../library/log'
-import Configuration from '../configuration'
+// import { Log } from '../index'
+// import Configuration from '../configuration'
 
 before(() => {
-  Logger.createFormattedLog(Configuration.tests.logPath)
-  Log.trace('before(() => { ... })')
+  // Log.createFormattedLog(Configuration.tests.logPath)
+  // Log.debug('before(() => { ... })')
+  // Log.debug({ 'Configuration': Configuration })
 })
 
-require('./library/file-system')
+// require('./library/file-system')
 // require('./library/log')
 // require('./library/path')
 // require('./library/process')
 
+require('./library/index')
+
 after(() => {
-  Log.trace('after(() => { ... })')
+  // Log.debug('after(() => { ... })')
 })

@@ -10,10 +10,6 @@ const Process = Object.create(process)
 
 Process.when = function (timeout, maximumDuration, testFn) {
 
-  // const Log = require('./log').Log
-
-  // Log.debug(`Process.when(${timeout}, ${maximumDuration}, testFn) { ... }`)
-
   return new Promise((resolve, reject) => {
 
     let waitLoop = function (start) {
@@ -45,9 +41,7 @@ Process.existsPID = function (path) {
     return false
   }
 
-  let pid = FileSystem.readFileSync(path, {
-    encoding: 'utf-8'
-  })
+  let pid = FileSystem.readFileSync(path, { 'encoding': 'utf-8' })
 
   try {
     process.kill(pid, 0)
@@ -62,19 +56,11 @@ Process.existsPID = function (path) {
 
 Process.createPID = function (path) {
 
-  // const FileSystem = require('fs') // require('./file-system')
-  // const Log = require('./log').Log
-  // const Path = require('./path')
-
-  // Log.debug(`Process.createPID('${Path.trim(path)}')`)
-
   if (this.existsPID(path)) {
     throw new ArgumentError(`The path '${Path.trim(path)}' exists.`)
   } else {
 
-    FileSystem.writeFileSync(path, process.pid, {
-      encoding: 'utf-8'
-    })
+    FileSystem.writeFileSync(path, process.pid, { 'encoding': 'utf-8' })
 
     Process.on('exit', () => {
       try {
@@ -93,17 +79,9 @@ Process.createPID = function (path) {
 
 Process.killPID = function (path, signal = 'SIGINT') {
 
-  // const FileSystem = require('fs') // require('./file-system')
-  // const Log = require('./log').Log
-  // const Path = require('./path')
-
-  // Log.debug(`Process.killPID('${Path.trim(path)}', ${signal})`)
-
   if (this.existsPID(path)) {
 
-    let pid = FileSystem.readFileSync(path, {
-      encoding: 'utf-8'
-    })
+    let pid = FileSystem.readFileSync(path, { 'encoding': 'utf-8' })
 
     process.kill(pid, signal)
 
@@ -117,11 +95,7 @@ Process.killPID = function (path, signal = 'SIGINT') {
 
 Process.exit = function (code = 0) {
 
-  // const Log = require('./log').Log
-
-  // Log.debug(`Process.exit(${code})`, )
-
-  setTimeout(() => process.exit(code), Configuration.process.timeouts.exit)
+  setTimeout(() => process.exit(code), Configuration.process.exitTimeout)
 
   return this
 

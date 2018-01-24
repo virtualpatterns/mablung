@@ -1,11 +1,8 @@
 import Configuration from '../../../configuration'
-import { Logger, Log } from '../../../library/log'
-import Process from '../../../library/process'
+import { Log, Process } from '../../../index'
 
-Logger.createFormattedLog(Configuration.process.logPath)
-Process.createPID(Configuration.process.pidPath)
-
-Log.debug(Configuration)
+Log.createFormattedLog(Configuration.tests.process.logPath)
+Process.createPID(Configuration.tests.process.pidPath)
 
 Process.on('message', (message) => {
   Log.debug({ 'message': message }, 'Process.on(\'message\', (message) => { ... })')
@@ -19,7 +16,7 @@ Process.once('SIGINT', () => {
 
 const wait = function (start) {
   Log.debug(`wait('${start.toISOString()}') ${(new Date()) - start}ms`)
-  setTimeout(() => wait(start), Configuration.process.timeouts.wait)
+  setTimeout(() => wait(start), Configuration.tests.process.waitTimeout)
 }
 
 wait(new Date())

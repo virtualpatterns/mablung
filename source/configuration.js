@@ -1,12 +1,7 @@
 export default {
 
   'process': {
-    'logPath': `${process.env.HOME}/Library/Logs/mablung/mablung-process.log`,
-    'pidPath': `${process.env.HOME}/Library/Logs/mablung/mablung-process.pid`,
-    'timeouts': {
-      'exit': 5000,
-      'wait': 15000
-    }
+    'exitTimeout': 5000,
   },
 
   'server': {
@@ -16,7 +11,17 @@ export default {
   },
 
   'tests': {
-    'logPath': `${process.env.HOME}/Library/Logs/mablung/mablung-tests.log`
+    'logPath': `${process.env.HOME}/Library/Logs/mablung/mablung-tests.log`,
+    'outPath': `${process.env.HOME}/Library/Logs/mablung/mablung-tests.out`,
+    'pidPath': `${process.env.HOME}/Library/Logs/mablung/mablung-tests.pid`,
+    'whenTimeout': 250,
+    'whenDuration': 3000,
+    'process': {
+      'modulePath': `${__dirname}/tests/library/resources/process.js`,
+      'logPath': `${process.env.HOME}/Library/Logs/mablung/mablung-process.log`,
+      'pidPath': `${process.env.HOME}/Library/Logs/mablung/mablung-process.pid`,
+      'waitTimeout': 15000
+    }
   }
 
 }

@@ -7,7 +7,10 @@ import Path from '../library/path'
 
 const REGEXP_STATIC = /^\/www\/(.*)$/
 
-Log.createFormattedLog(Configuration.server.logPath)
+Log.createFormattedLog()
+// Log.createFormattedLog(Configuration.server.logPath)
+
+Log.debug({ 'Configuration': Configuration })
 
 const server = REST.createServer()
 

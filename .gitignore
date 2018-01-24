@@ -3,13 +3,5 @@
 *.log
 *.out
 *.pid
-/coverage
-/library
+/distributables
 /node_modules
-/process
-/sandbox
-/server
-/source/sandbox
-/tests
-/www
-/webpack.config.js
