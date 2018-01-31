@@ -55,6 +55,8 @@ Log.getParameters = function (parameters) {
 
       switch (true) {
         case parameters[0] instanceof _stream2.default.Writable:
+        case _is2.default.function(parameters[0]._write):
+        case _is2.default.function(parameters[0]._writev):
           options = {};
           stream = parameters[0];
           break;
@@ -82,53 +84,6 @@ Log.getParameters = function (parameters) {
   }
 
   return [options, stream];
-};
-
-Log.createLog = function () {
-  var _this = this;
-
-  for (var _len = arguments.length, parameters = Array(_len), _key = 0; _key < _len; _key++) {
-    parameters[_key] = arguments[_key];
-  }
-
-  var _getParameters = this.getParameters(parameters),
-      _getParameters2 = _slicedToArray(_getParameters, 2),
-      userLogOptions = _getParameters2[0],
-      userStream = _getParameters2[1];
-
-  var defaultLogOptions = null;
-
-  if (_detectNode2.default) {
-    defaultLogOptions = {
-      'level': 'debug'
-    };
-  } else {
-    defaultLogOptions = {
-      'browser': {
-        'asObject': true
-      },
-      'level': 'debug'
-    };
-  }
-
-  var logOptions = Object.assign(defaultLogOptions, userLogOptions);
-  var log = _pino2.default.call(this, logOptions, userStream);
-
-  var _loop = function _loop(level) {
-    _this[level] = function () {
-      for (var _len2 = arguments.length, parameters = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
-        parameters[_key2] = arguments[_key2];
-      }
-
-      return log[level].apply(log, parameters);
-    };
-  };
-
-  for (var level in this.levels.values) {
-    _loop(level);
-  }
-
-  Log.debug(_is2.default.emptyObject(logOptions) ? {} : { 'logOptions': logOptions }, 'Log.createLog(...parameters) { ... }');
 };
 
 Log.format = function (data) {
@@ -161,22 +116,62 @@ Log.format = function (data) {
     }
 
     if (!_is2.default.emptyObject(_data)) {
-      string += '\n\n' + _util2.default.inspect(_data, {
-        'depth': null,
-        'maxArrayLength': null,
-        'showHidden': true
-      }) + '\n' + (_detectNode2.default ? '' : '\n');
+      string += '\n\n' + _util2.default.inspect(_data, { 'depth': null, 'maxArrayLength': null, 'showHidden': true }) + '\n' + (_detectNode2.default ? '' : '\n');
     }
   }
 
   return string;
 };
 
-Log.write = function (data) {
-  console.log(this.format(data)); // eslint-disable-line no-console
+Log.createLog = function () {
+  var _this = this;
+
+  for (var _len = arguments.length, parameters = Array(_len), _key = 0; _key < _len; _key++) {
+    parameters[_key] = arguments[_key];
+  }
+
+  var _getParameters = this.getParameters(parameters),
+      _getParameters2 = _slicedToArray(_getParameters, 2),
+      userLogOptions = _getParameters2[0],
+      userStream = _getParameters2[1];
+
+  var defaultLogOptions = null;
+
+  if (_detectNode2.default) {
+    defaultLogOptions = { 'level': 'debug' };
+  } else {
+    defaultLogOptions = {
+      'browser': {
+        'asObject': true,
+        'serialize': true
+      },
+      'level': 'debug'
+    };
+  }
+
+  var logOptions = Object.assign(defaultLogOptions, userLogOptions);
+  var log = _pino2.default.call(this, logOptions, userStream);
+
+  var _loop = function _loop(level) {
+    _this[level] = function () {
+      for (var _len2 = arguments.length, parameters = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+        parameters[_key2] = arguments[_key2];
+      }
+
+      return log[level].apply(log, parameters);
+    };
+  };
+
+  for (var level in this.levels.values) {
+    _loop(level);
+  }
+
+  Log.debug(_is2.default.emptyObject(logOptions) ? {} : { 'logOptions': logOptions }, 'Log.createLog(...parameters) { ... }');
 };
 
 Log.createFormattedLog = function () {
+  var _this2 = this;
+
   for (var _len3 = arguments.length, parameters = Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
     parameters[_key3] = arguments[_key3];
   }
@@ -198,7 +193,7 @@ Log.createFormattedLog = function () {
 
     var formatOptions = userFormatOptions == true ? {} : Object.assign(defaultFormatOptions, userFormatOptions);
 
-    var formattedStream = Log.pretty(formatOptions);
+    var formattedStream = _pino2.default.pretty(formatOptions);
     formattedStream.pipe(userStream);
 
     this.createLog(userLogOptions, formattedStream);
@@ -209,7 +204,10 @@ Log.createFormattedLog = function () {
     var defaultLogOptions = {
       'browser': {
         'asObject': true,
-        'write': this.write
+        'serialize': true,
+        'write': function write(data) {
+          console.log(_this2.format(data)); // eslint-disable-line no-console
+        }
       }
     };
 

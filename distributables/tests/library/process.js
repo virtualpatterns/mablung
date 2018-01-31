@@ -1,8 +1,6 @@
 'use strict';
 
-var _assert = require('assert');
-
-var _assert2 = _interopRequireDefault(_assert);
+var _chai = require('chai');
 
 var _child_process = require('child_process');
 
@@ -119,7 +117,7 @@ describe('process', function () {
         })));
 
         it('should return true', function () {
-          _assert2.default.equal(_index.Process.existsPID(_configuration2.default.tests.pidPath), true);
+          _chai.assert.equal(_index.Process.existsPID(_configuration2.default.tests.pidPath), true);
         });
 
         after(_asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee4() {
@@ -161,7 +159,7 @@ describe('process', function () {
         })));
 
         it('should return false', function () {
-          _assert2.default.equal(_index.Process.existsPID(_configuration2.default.tests.pidPath), false);
+          _chai.assert.equal(_index.Process.existsPID(_configuration2.default.tests.pidPath), false);
         });
       });
 
@@ -188,7 +186,7 @@ describe('process', function () {
         })));
 
         it('should return false', function () {
-          _assert2.default.equal(_index.Process.existsPID(_configuration2.default.tests.pidPath), false);
+          _chai.assert.equal(_index.Process.existsPID(_configuration2.default.tests.pidPath), false);
         });
       });
 
@@ -281,15 +279,15 @@ describe('process', function () {
       })));
 
       it('should call Process.on', function () {
-        _assert2.default.ok(_index.Process.on.calledOnce);
+        _chai.assert.ok(_index.Process.on.calledOnce);
       });
 
       it('should call Process.on with arguments', function () {
-        _assert2.default.ok(_index.Process.on.calledWith('exit'));
+        _chai.assert.ok(_index.Process.on.calledWith('exit'));
       });
 
       it('should return Process', function () {
-        _assert2.default.ok(_index.Process.createPID.returned(_index.Process));
+        _chai.assert.ok(_index.Process.createPID.returned(_index.Process));
       });
 
       after(_asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee10() {
@@ -357,7 +355,7 @@ describe('process', function () {
           while (1) {
             switch (_context13.prev = _context13.next) {
               case 0:
-                _context13.t0 = _assert2.default;
+                _context13.t0 = _chai.assert;
                 _context13.next = 3;
                 return _index.FileSystem.promisedReadFile(_configuration2.default.tests.pidPath, { 'encoding': 'utf-8' });
 
@@ -376,7 +374,7 @@ describe('process', function () {
       })));
 
       it('should fail if the file exists', function () {
-        _assert2.default.throws(function () {
+        _chai.assert.throws(function () {
           return _index.Process.createPID(_configuration2.default.tests.pidPath);
         }, _argumentError2.default);
       });
@@ -566,7 +564,7 @@ describe('process', function () {
       })));
 
       it('should fail', function () {
-        _assert2.default.throws(function () {
+        _chai.assert.throws(function () {
           return _index.Process.killPID(_configuration2.default.tests.process.pidPath);
         }, _argumentError2.default);
       });
@@ -595,7 +593,7 @@ describe('process', function () {
       })));
 
       it('should fail', function () {
-        _assert2.default.throws(function () {
+        _chai.assert.throws(function () {
           return _index.Process.killPID(_configuration2.default.tests.process.pidPath);
         }, _argumentError2.default);
       });

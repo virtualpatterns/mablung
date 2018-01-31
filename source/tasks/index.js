@@ -30,23 +30,33 @@ task('bundle', [ 'build' ], { 'async': true }, () => {
   Jake.cpR('source/www', 'distributables', { 'silent': true })
   Jake.rmRf('distributables/www/scripts', { 'silent': true })
 
-  Jake.exec([ 'webpack --config distributables/webpack.configuration.js' ], { 'printStderr': true, 'printStdout': false }, () => complete())
+  Jake.exec([ 'webpack --config distributables/webpack.configuration.js' ], { 'printStderr': true, 'printStdout': true }, () => complete())
 
 })
 
 desc('Run server')
 task('run', [ 'bundle' ], { 'async': true }, () => {
+
   Jake.rmRf(Configuration.server.logPath, { 'silent': true })
+
   Jake.exec([
     'clear',
     'node distributables/server/index.js'
   ], { 'printStderr': true, 'printStdout': true }, () => complete())
+
 })
 
 desc('Run tests')
 task('test', [ 'bundle' ], { 'async': true }, () => {
-  Jake.rmRf(Configuration.tests.logPath, { 'silent': true })
-  Jake.exec([ 'mocha --bail --timeout 0 distributables/tests/index.js' ], { 'printStderr': true, 'printStdout': true }, () => complete())
+
+  Jake.rmRf(Configuration.tests.process.logPath, { 'silent': true })
+  Jake.rmRf(Configuration.tests.screenshotPath, { 'silent': true })
+
+  Jake.exec([
+    'clear',
+    'mocha --bail --timeout 0 distributables/tests/index.js'
+  ], { 'printStderr': true, 'printStdout': true }, () => complete())
+
 })
 
 desc('Publish package')

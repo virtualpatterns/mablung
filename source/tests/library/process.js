@@ -1,4 +1,4 @@
-import Assert from 'assert'
+import { assert as Assert } from 'chai'
 import ChildProcess from 'child_process'
 import Sinon from 'sinon'
 

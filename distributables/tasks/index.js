@@ -14,12 +14,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 
-// Jake.addListener('start', () => {
-// })
-//
-// Jake.addListener('complete', () => {
-// })
-
 desc('Remove built and bundled folders and files');
 task('clean', [], { 'async': true }, function () {
   _jake2.default.exec([].concat(_toConsumableArray(['library', 'sandbox', 'server', 'tests', 'www'].map(function (folderName) {
@@ -55,14 +49,16 @@ task('bundle', ['build'], { 'async': true }, function () {
   _jake2.default.cpR('source/www', 'distributables', { 'silent': true });
   _jake2.default.rmRf('distributables/www/scripts', { 'silent': true });
 
-  _jake2.default.exec(['webpack --config distributables/webpack.configuration.js'], { 'printStderr': true, 'printStdout': false }, function () {
+  _jake2.default.exec(['webpack --config distributables/webpack.configuration.js'], { 'printStderr': true, 'printStdout': true }, function () {
     return complete();
   });
 });
 
 desc('Run server');
 task('run', ['bundle'], { 'async': true }, function () {
+
   _jake2.default.rmRf(_configuration2.default.server.logPath, { 'silent': true });
+
   _jake2.default.exec(['clear', 'node distributables/server/index.js'], { 'printStderr': true, 'printStdout': true }, function () {
     return complete();
   });
@@ -70,12 +66,19 @@ task('run', ['bundle'], { 'async': true }, function () {
 
 desc('Run tests');
 task('test', ['bundle'], { 'async': true }, function () {
-  _jake2.default.rmRf(_configuration2.default.tests.logPath, { 'silent': true });
-  _jake2.default.exec(['mocha --bail --timeout 0 distributables/tests/index.js'], { 'printStderr': true, 'printStdout': true }, function () {
+
+  _jake2.default.rmRf(_configuration2.default.tests.process.logPath, { 'silent': true });
+  _jake2.default.rmRf(_configuration2.default.tests.screenshotPath, { 'silent': true });
+
+  _jake2.default.exec(['clear', 'mocha --bail --timeout 0 distributables/tests/index.js'], { 'printStderr': true, 'printStdout': true }, function () {
     return complete();
   });
 });
 
-// "test": "npm run test-library && npm run test-www",
-// "test-library": "npm run build && mocha --bail --compilers js:babel-core/register --timeout 0 distributables/tests/index.js",
+desc('Publish package');
+task('publish', ['test'], { 'async': true }, function () {
+  _jake2.default.exec(['npm publish --access public', 'npm --no-git-tag-version version patch', 'git add package.json', 'git commit --message="Increment version"'], { 'printStderr': true, 'printStdout': true }, function () {
+    return complete();
+  });
+});
 //# sourceMappingURL=index.js.map

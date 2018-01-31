@@ -2,23 +2,22 @@
 
 require('babel-polyfill');
 
-// import { Log } from '../index'
-// import Configuration from '../configuration'
+var _chai = require('chai');
+
+var _chai2 = _interopRequireDefault(_chai);
+
+var _chaiJsonSchema = require('chai-json-schema');
+
+var _chaiJsonSchema2 = _interopRequireDefault(_chaiJsonSchema);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 before(function () {
-  // Log.createFormattedLog(Configuration.tests.logPath)
-  // Log.debug('before(() => { ... })')
-  // Log.debug({ 'Configuration': Configuration })
+  _chai2.default.use(_chaiJsonSchema2.default);
 });
-
-// require('./library/file-system')
-// require('./library/log')
-// require('./library/path')
-// require('./library/process')
 
 require('./library/index');
+require('./www/index');
 
-after(function () {
-  // Log.debug('after(() => { ... })')
-});
+after(function () {});
 //# sourceMappingURL=index.js.map

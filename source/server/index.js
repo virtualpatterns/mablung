@@ -5,10 +5,11 @@ import Configuration from '../configuration'
 import { Log } from '../index'
 import Path from '../library/path'
 
+const REGEXP_MOCHA = /^\/www\/vendor\/mocha\/(.*)$/
 const REGEXP_STATIC = /^\/www\/(.*)$/
 
-Log.createFormattedLog()
-// Log.createFormattedLog(Configuration.server.logPath)
+// Log.createFormattedLog()
+Log.createFormattedLog(Configuration.server.logPath)
 
 Log.debug({ 'Configuration': Configuration })
 
@@ -41,6 +42,14 @@ server.get('/www', (request, response, next) => {
   response.redirect('/www/index.html', next)
 })
 
+server.get(REGEXP_MOCHA, (request, response, next) => {
+  RESTPlugins.serveStatic({
+    'directory': Path.join(__dirname, '..', '..', 'node_modules', 'mocha'),
+    'file': request.params[0],
+    'maxAge': 0
+  })(request, response, next)
+})
+
 server.get(REGEXP_STATIC, (request, response, next) => {
   RESTPlugins.serveStatic({
     'directory': Path.join(__dirname, '..', 'www'),
@@ -51,4 +60,5 @@ server.get(REGEXP_STATIC, (request, response, next) => {
 
 server.listen(Configuration.server.port, Configuration.server.address, () => {
   Log.debug(`server.listen(${Configuration.server.port}, '${Configuration.server.address}', () => { ... })`)
+  console.log(`Listening at http://${Configuration.server.address}:${Configuration.server.port} ...`) // eslint-disable-line no-console
 })

@@ -1,8 +1,6 @@
 'use strict';
 
-var _assert = require('assert');
-
-var _assert2 = _interopRequireDefault(_assert);
+var _chai = require('chai');
 
 var _configuration = require('../../configuration');
 
@@ -17,18 +15,18 @@ describe('path', function () {
   describe('isRelative', function () {
 
     it('should return true', function () {
-      _assert2.default.ok(_index.Path.isRelative('./distributables/tests/library/path.js'));
+      _chai.assert.ok(_index.Path.isRelative('./distributables/tests/library/path.js'));
     });
 
     it('should return false', function () {
-      _assert2.default.ok(!_index.Path.isRelative(_configuration2.default.tests.outPath));
+      _chai.assert.ok(!_index.Path.isRelative(_configuration2.default.tests.outPath));
     });
   });
 
   describe('trim', function () {
 
     it('should replace the working directory with .', function () {
-      _assert2.default.equal(_index.Path.trim(__filename), './distributables/tests/library/path.js');
+      _chai.assert.equal(_index.Path.trim(__filename), './distributables/tests/library/path.js');
     });
   });
 });

@@ -23,29 +23,6 @@ var _process2 = _interopRequireDefault(_process);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-// import IsNode from 'detect-node'
-//
-// let index = null
-//
-// if (IsNode) {
-//
-//   index = {
-//     'FileSystem': require('./library/file-system'),
-//     'Log': require('./library/log'),
-//     'Path': require('./library/path'),
-//     'Process': require('./library/process')
-//   }
-//
-// } else {
-//
-//   index = {
-//     'Log': require('./library/log')
-//   }
-//
-// }
-//
-// export default index
-
 exports.FileSystem = _fileSystem2.default;
 exports.Log = _log2.default;
 exports.Path = _path2.default;

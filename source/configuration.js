@@ -1,3 +1,7 @@
+import Address from 'quick-local-ip'
+
+const PORT = 8080
+
 export default {
 
   'process': {
@@ -7,12 +11,16 @@ export default {
   'server': {
     'address': '0.0.0.0',
     'logPath': `${process.env.HOME}/Library/Logs/mablung/mablung-server.log`,
-    'port': 8080
+    'port': PORT
   },
 
   'tests': {
+    'expressions': {
+      'dateTime': '\\d{4}-[01]\\d-[0-3]\\dT[0-2]\\d:[0-5]\\d:[0-5]\\d\\.\\d+([+-][0-2]\\d:[0-5]\\d|Z)'
+    },
     'logPath': `${process.env.HOME}/Library/Logs/mablung/mablung-tests.log`,
     'outPath': `${process.env.HOME}/Library/Logs/mablung/mablung-tests.out`,
+    'pages': [],
     'pidPath': `${process.env.HOME}/Library/Logs/mablung/mablung-tests.pid`,
     'whenTimeout': 250,
     'whenDuration': 3000,
@@ -21,7 +29,9 @@ export default {
       'logPath': `${process.env.HOME}/Library/Logs/mablung/mablung-process.log`,
       'pidPath': `${process.env.HOME}/Library/Logs/mablung/mablung-process.pid`,
       'waitTimeout': 15000
-    }
+    },
+    'screenshotPath': `${process.cwd()}/mablung-tests.png`,
+    'serverUrl': `http://${Address.getLocalIP4()}:${PORT}`,
   }
 
 }

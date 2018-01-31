@@ -1,4 +1,4 @@
-import Assert from 'assert'
+import { assert as Assert } from 'chai'
 
 import Configuration from '../../configuration'
 import { Path } from '../../index'

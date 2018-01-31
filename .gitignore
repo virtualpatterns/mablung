@@ -3,5 +3,6 @@
 *.log
 *.out
 *.pid
+*.png
 /distributables
 /node_modules

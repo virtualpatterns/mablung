@@ -1,21 +1,12 @@
 import 'babel-polyfill'
-
-// import { Log } from '../index'
-// import Configuration from '../configuration'
+import Chai from 'chai'
+import ChaiJSONSchema from 'chai-json-schema'
 
 before(() => {
-  // Log.createFormattedLog(Configuration.tests.logPath)
-  // Log.debug('before(() => { ... })')
-  // Log.debug({ 'Configuration': Configuration })
+  Chai.use(ChaiJSONSchema)
 })
-
-// require('./library/file-system')
-// require('./library/log')
-// require('./library/path')
-// require('./library/process')
 
 require('./library/index')
+require('./www/index')
 
-after(() => {
-  // Log.debug('after(() => { ... })')
-})
+after(() => {})

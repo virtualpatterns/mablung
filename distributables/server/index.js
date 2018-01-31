@@ -20,10 +20,11 @@ var _path2 = _interopRequireDefault(_path);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+var REGEXP_MOCHA = /^\/www\/vendor\/mocha\/(.*)$/;
 var REGEXP_STATIC = /^\/www\/(.*)$/;
 
-_index.Log.createFormattedLog();
-// Log.createFormattedLog(Configuration.server.logPath)
+// Log.createFormattedLog()
+_index.Log.createFormattedLog(_configuration2.default.server.logPath);
 
 _index.Log.debug({ 'Configuration': _configuration2.default });
 
@@ -56,6 +57,14 @@ server.get('/www', function (request, response, next) {
   response.redirect('/www/index.html', next);
 });
 
+server.get(REGEXP_MOCHA, function (request, response, next) {
+  _restifyPlugins2.default.serveStatic({
+    'directory': _path2.default.join(__dirname, '..', '..', 'node_modules', 'mocha'),
+    'file': request.params[0],
+    'maxAge': 0
+  })(request, response, next);
+});
+
 server.get(REGEXP_STATIC, function (request, response, next) {
   _restifyPlugins2.default.serveStatic({
     'directory': _path2.default.join(__dirname, '..', 'www'),
@@ -66,5 +75,6 @@ server.get(REGEXP_STATIC, function (request, response, next) {
 
 server.listen(_configuration2.default.server.port, _configuration2.default.server.address, function () {
   _index.Log.debug('server.listen(' + _configuration2.default.server.port + ', \'' + _configuration2.default.server.address + '\', () => { ... })');
+  console.log('Listening at http://' + _configuration2.default.server.address + ':' + _configuration2.default.server.port + ' ...'); // eslint-disable-line no-console
 });
 //# sourceMappingURL=index.js.map

@@ -24,6 +24,8 @@ Log.getParameters = function (parameters) {
 
       switch (true) {
         case parameters[0] instanceof Stream.Writable:
+        case Is.function(parameters[0]._write):
+        case Is.function(parameters[0]._writev):
           options = {}
           stream = parameters[0]
           break
@@ -51,36 +53,6 @@ Log.getParameters = function (parameters) {
   }
 
   return [ options, stream ]
-
-}
-
-Log.createLog = function (...parameters) {
-
-  let [ userLogOptions, userStream ] = this.getParameters(parameters)
-
-  let defaultLogOptions = null
-
-  if (IsNode) {
-    defaultLogOptions = {
-      'level': 'debug'
-    }
-  } else {
-    defaultLogOptions = {
-      'browser': {
-        'asObject': true
-      },
-      'level': 'debug'
-    }
-  }
-
-  let logOptions = Object.assign(defaultLogOptions, userLogOptions)
-  let log = Pino.call(this, logOptions, userStream)
-
-  for (let level in this.levels.values) {
-    this[level] = (...parameters) => log[level].apply(log, parameters)
-  }
-
-  Log.debug(Is.emptyObject(logOptions) ? {} : { 'logOptions': logOptions }, 'Log.createLog(...parameters) { ... }')
 
 }
 
@@ -126,11 +98,7 @@ Log.format = function (data) {
     }
 
     if (!Is.emptyObject(_data)) {
-      string += `\n\n${Utilities.inspect(_data, {
-        'depth': null,
-        'maxArrayLength': null,
-        'showHidden': true
-      })}\n${IsNode ? '' : '\n'}`
+      string += `\n\n${Utilities.inspect(_data, { 'depth': null, 'maxArrayLength': null, 'showHidden': true })}\n${IsNode ? '' : '\n'}`
     }
 
   }
@@ -139,8 +107,33 @@ Log.format = function (data) {
 
 }
 
-Log.write = function (data) {
-  console.log(this.format(data)) // eslint-disable-line no-console
+Log.createLog = function (...parameters) {
+
+  let [ userLogOptions, userStream ] = this.getParameters(parameters)
+
+  let defaultLogOptions = null
+
+  if (IsNode) {
+    defaultLogOptions = { 'level': 'debug' }
+  } else {
+    defaultLogOptions = {
+      'browser': {
+        'asObject': true,
+        'serialize': true
+      },
+      'level': 'debug'
+    }
+  }
+
+  let logOptions = Object.assign(defaultLogOptions, userLogOptions)
+  let log = Pino.call(this, logOptions, userStream)
+
+  for (let level in this.levels.values) {
+    this[level] = (...parameters) => log[level].apply(log, parameters)
+  }
+
+  Log.debug(Is.emptyObject(logOptions) ? {} : { 'logOptions': logOptions }, 'Log.createLog(...parameters) { ... }')
+
 }
 
 Log.createFormattedLog = function (...parameters) {
@@ -159,7 +152,7 @@ Log.createFormattedLog = function (...parameters) {
 
     let formatOptions = userFormatOptions == true ? {} : Object.assign(defaultFormatOptions, userFormatOptions)
 
-    let formattedStream = Log.pretty(formatOptions)
+    let formattedStream = Pino.pretty(formatOptions)
     formattedStream.pipe(userStream)
 
     this.createLog(userLogOptions, formattedStream)
@@ -171,7 +164,10 @@ Log.createFormattedLog = function (...parameters) {
     let defaultLogOptions = {
       'browser': {
         'asObject': true,
-        'write': this.write
+        'serialize': true,
+        'write': (data) => {
+          console.log(this.format(data)) // eslint-disable-line no-console
+        }
       }
     }
 
