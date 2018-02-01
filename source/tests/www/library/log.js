@@ -89,8 +89,8 @@ const CREATE_LOG_MESSAGE = Merge(MESSAGE, {
 //   'required': [ ...LEVEL_MESSAGE_MESSAGE.required, 'a', 'b', 'c' ]
 // })
 
-const REGEXP_CREATE_LOG_MESSAGE = new RegExp(`^${Configuration.tests.expressions.dateTime} DEBUG Log.createLog\\(\\.{3}parameters\\) \\{ .{3} \\}.*$`, 'm') // /^\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d\.\d+([+-][0-2]\d:[0-5]\d|Z) DEBUG Log.createLog\(\.{3}parameters\) \{ .{3} \}.*$/m
-const REGEXP_CREATE_FORMATTED_LOG_MESSAGE = new RegExp(`^${Configuration.tests.expressions.dateTime} DEBUG Log.createFormattedLog\\(\\.{3}parameters\\) \\{ .{3} \\}$`, 'm') // /^\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d\.\d+([+-][0-2]\d:[0-5]\d|Z) DEBUG Log.createFormattedLog\(\.{3}parameters\) \{ .{3} \}.*$/m
+const REGEXP_CREATE_LOG_MESSAGE = new RegExp(`^${Configuration.tests.patterns.prefixBrowser} DEBUG Log.createLog\\(\\.{3}parameters\\) \\{ .{3} \\}.*$`, 'm') // /^\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d\.\d+([+-][0-2]\d:[0-5]\d|Z) DEBUG Log.createLog\(\.{3}parameters\) \{ .{3} \}.*$/m
+const REGEXP_CREATE_FORMATTED_LOG_MESSAGE = new RegExp(`^${Configuration.tests.patterns.prefixBrowser} DEBUG Log.createFormattedLog\\(\\.{3}parameters\\) \\{ .{3} \\}$`, 'm') // /^\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d\.\d+([+-][0-2]\d:[0-5]\d|Z) DEBUG Log.createFormattedLog\(\.{3}parameters\) \{ .{3} \}.*$/m
 
 describe('log', () => {
 
@@ -147,6 +147,22 @@ describe('log', () => {
   //   })
   //
   // })
+
+  it('Is should be defined', async () => {
+    Assert.ok(await Page.evaluate(() => window.Is))
+  })
+
+  it('Log should be defined', async () => {
+    Assert.ok(await Page.evaluate(() => window.Log))
+  })
+
+  it('Pino should be defined', async () => {
+    Assert.ok(await Page.evaluate(() => window.Pino))
+  })
+
+  it('Sinon should be defined', async () => {
+    Assert.ok(await Page.evaluate(() => window.Sinon))
+  })
 
   describe('createLog', () => {
 

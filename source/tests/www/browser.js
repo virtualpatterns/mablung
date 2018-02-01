@@ -54,7 +54,11 @@ Browser.open = async function (url, options) {
   let browser = await Puppeteer.launch(options)
   let [ page ] = await browser.pages()
 
-  await page.goto(url)
+  page.on('pageerror', (error) => {
+    console.log(`\nAn error occurred opening the page at ${url} ...\n\n${error.stack}\n`) // eslint-disable-line no-console
+  })
+
+  await page.goto(url, { 'waitUntil': 'domcontentloaded' })
 
   Object.setPrototypeOf(Page, page)
   Object.setPrototypeOf(Browser, browser)

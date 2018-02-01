@@ -65,7 +65,7 @@ Log.format = function (data) {
       '%s %s %s %s %s',
       new Date(data.time).toISOString(),
       data.hostname,
-      data.pid ? Pad(5, data.pid.toString()): '000000',
+      data.pid,
       Pad(Log.levels.labels[data.level].toUpperCase(), 5),
       data[this.messageKey || 'msg'] || ''
     )

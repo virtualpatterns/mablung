@@ -1,16 +1,17 @@
 import { assert as Assert } from 'chai'
 import Is from '@pwn/is'
-import MemoryStream from 'memory-streams'
+// import MemoryStream from 'memory-streams'
 import Merge from 'object-merge'
 import OS from 'os'
-import Pad from 'pad'
+// import Pad from 'pad'
 import Pino from 'pino'
 import Sinon from 'sinon'
 // import Stream from 'stream'
 // import Utilities from 'util'
 
-// import Configuration from '../../configuration'
+import Configuration from '../../configuration'
 import { Log, Process } from '../../index'
+import { WriteStream as Stream } from './stream'
 
 // import TestError from '../errors/test-error'
 
@@ -107,8 +108,8 @@ const CREATE_LOG_MESSAGE = Merge(MESSAGE, {
 //   'required': [ ...LEVEL_MESSAGE_MESSAGE.required, 'a', 'b', 'c' ]
 // })
 
-// const REGEXP_CREATE_LOG_MESSAGE = new RegExp(`^${Configuration.tests.expressions.dateTime} DEBUG Log.createLog\\(\\.{3}parameters\\) \\{ .{3} \\}.*$`, 'm')
-// const REGEXP_CREATE_FORMATTED_LOG_MESSAGE = new RegExp(`^${Configuration.tests.expressions.dateTime} DEBUG Log.createFormattedLog\\(\\.{3}parameters\\) \\{ .{3} \\}$`, 'm')
+const REGEXP_CREATE_LOG_MESSAGE = new RegExp(`^${Configuration.tests.patterns.prefixNode} DEBUG Log.createLog\\(\\.{3}parameters\\) \\{ .{3} \\}.*$`, 'm')
+const REGEXP_CREATE_FORMATTED_LOG_MESSAGE = new RegExp(`^${Configuration.tests.patterns.prefixNode} DEBUG Log.createFormattedLog\\(\\.{3}parameters\\) \\{ .{3} \\}$`, 'm')
 
 describe('log', () => {
 
@@ -161,7 +162,7 @@ describe('log', () => {
   //
   //     before(async () => {
   //
-  //       parameters = [ new MemoryStream.WritableStream() ]
+  //       parameters = [ new Stream() ]
   //
   //       ;[ options, stream ] = Log.getParameters(parameters)
   //
@@ -213,7 +214,7 @@ describe('log', () => {
   //
   //     before(async () => {
   //
-  //       parameters = [ { 'level': 'trace' }, new MemoryStream.WritableStream() ]
+  //       parameters = [ { 'level': 'trace' }, new Stream() ]
   //
   //       ;[ options, stream ] = Log.getParameters(parameters)
   //
@@ -258,47 +259,47 @@ describe('log', () => {
   //
   // })
 
-  describe('format', () => {
-
-    let data = {
-      'hostname': OS.hostname(),
-      'level': '30',
-      'msg': 'MESSAGE',
-      'pid': Process.pid,
-      'time': new Date('1973-05-28T17:00:00')
-    }
-
-    describe('(when passing a message)', () => {
-
-      it('should return a formatted string', () => {
-        Assert.equal(Log.format(data), `${data.time.toISOString()} ${data.hostname} ${Pad(5, data.pid.toString())} INFO  MESSAGE`)
-      })
-
-    })
-
-    describe('(when passing an error)', () => {
-
-      let stack = null
-
-      before(() => {
-        stack = (new Error('MESSAGE')).stack
-      })
-
-      it('should return a formatted string', () => {
-        Assert.equal(Log.format(Object.assign({ 'stack': stack }, data)), `${data.time.toISOString()} ${data.hostname} ${Pad(5, data.pid.toString())} INFO  MESSAGE\n\n${stack}\n`)
-      })
-
-    })
-
-    describe('(when passing an object)', () => {
-
-      it('should return a formatted string', () => {
-        Assert.equal(Log.format(Object.assign({ 'a': 1, 'b': 2, 'c': 3 }, data)), `${data.time.toISOString()} ${data.hostname} ${Pad(5, data.pid.toString())} INFO  MESSAGE\n\n{ a: 1, b: 2, c: 3 }\n`)
-      })
-
-    })
-
-  })
+  // describe('format', () => {
+  //
+  //   let data = {
+  //     'hostname': OS.hostname(),
+  //     'level': '30',
+  //     'msg': 'MESSAGE',
+  //     'pid': Process.pid,
+  //     'time': new Date('1973-05-28T17:00:00')
+  //   }
+  //
+  //   describe('(when passing a message)', () => {
+  //
+  //     it('should return a formatted string', () => {
+  //       Assert.equal(Log.format(data), `${data.time.toISOString()} ${data.hostname} ${Pad(5, data.pid.toString())} INFO  MESSAGE`)
+  //     })
+  //
+  //   })
+  //
+  //   describe('(when passing an error)', () => {
+  //
+  //     let stack = null
+  //
+  //     before(() => {
+  //       stack = (new Error('MESSAGE')).stack
+  //     })
+  //
+  //     it('should return a formatted string', () => {
+  //       Assert.equal(Log.format(Object.assign({ 'stack': stack }, data)), `${data.time.toISOString()} ${data.hostname} ${Pad(5, data.pid.toString())} INFO  MESSAGE\n\n${stack}\n`)
+  //     })
+  //
+  //   })
+  //
+  //   describe('(when passing an object)', () => {
+  //
+  //     it('should return a formatted string', () => {
+  //       Assert.equal(Log.format(Object.assign({ 'a': 1, 'b': 2, 'c': 3 }, data)), `${data.time.toISOString()} ${data.hostname} ${Pad(5, data.pid.toString())} INFO  MESSAGE\n\n{ a: 1, b: 2, c: 3 }\n`)
+  //     })
+  //
+  //   })
+  //
+  // })
 
   describe('createLog', () => {
 
@@ -311,10 +312,10 @@ describe('log', () => {
 
         Sinon.spy(Pino, 'call')
 
-        stream = new MemoryStream.WritableStream()
+        stream = new Stream()
         Log.createLog(stream)
 
-        messages = getMessages(stream)
+        messages = stream.getJSONMessages()
 
       })
 
@@ -367,10 +368,10 @@ describe('log', () => {
 
         Sinon.spy(Pino, 'call')
 
-        stream = new MemoryStream.WritableStream()
+        stream = new Stream()
         Log.createLog({ 'level': 'trace' }, stream)
 
-        messages = getMessages(stream)
+        messages = stream.getJSONMessages()
 
       })
 
@@ -406,11 +407,16 @@ describe('log', () => {
 
     describe('(when passing a stream)', () => {
 
+      let messages = null
+
       before(() => {
 
         Sinon.spy(Pino, 'pretty')
 
-        Log.createFormattedLog(new MemoryStream.WritableStream())
+        let stream = new Stream()
+        Log.createFormattedLog(stream)
+
+        messages = stream.getMessages()
 
       })
 
@@ -420,6 +426,18 @@ describe('log', () => {
 
       it('should call Pino.pretty with valid arguments', () => {
         Assert.ok(Pino.pretty.calledWith(Sinon.match({ 'formatter': Log.format })))
+      })
+
+      it('should create two messages', () => {
+        Assert.equal(messages.length, 2)
+      })
+
+      it('should create a valid Log.createLog message', () => {
+        Assert.ok(REGEXP_CREATE_LOG_MESSAGE.test(messages[0]))
+      })
+
+      it('should create a valid Log.createFormattedLog message', () => {
+        Assert.ok(REGEXP_CREATE_FORMATTED_LOG_MESSAGE.test(messages[1]))
       })
 
       after(() => {
@@ -434,7 +452,7 @@ describe('log', () => {
 
         Sinon.spy(Pino, 'pretty')
 
-        Log.createFormattedLog({ 'level': 'trace' }, new MemoryStream.WritableStream())
+        Log.createFormattedLog({ 'level': 'trace' }, new Stream())
 
       })
 
@@ -458,7 +476,7 @@ describe('log', () => {
 
         Sinon.spy(Pino, 'pretty')
 
-        Log.createFormattedLog({ 'level': 'trace', 'prettyPrint': true }, new MemoryStream.WritableStream())
+        Log.createFormattedLog({ 'level': 'trace', 'prettyPrint': true }, new Stream())
 
       })
 
@@ -482,7 +500,7 @@ describe('log', () => {
 
         Sinon.spy(Pino, 'pretty')
 
-        Log.createFormattedLog({ 'level': 'trace', 'prettyPrint': { 'levelFirst': true } }, new MemoryStream.WritableStream())
+        Log.createFormattedLog({ 'level': 'trace', 'prettyPrint': { 'levelFirst': true } }, new Stream())
 
       })
 
@@ -537,12 +555,12 @@ describe('log', () => {
   //
   //         before(() => {
   //
-  //           let stream = new MemoryStream.WritableStream()
+  //           let stream = new Stream()
   //           Log.createLog({ 'level': 'trace' }, stream)
   //
   //           Log[levelName](levelName.toUpperCase())
   //
-  //           messages = getMessages(stream)
+  //           messages = stream.getJSONMessages()
   //
   //         })
   //
@@ -571,12 +589,12 @@ describe('log', () => {
   //
   //         before(() => {
   //
-  //           let stream = new MemoryStream.WritableStream()
+  //           let stream = new Stream()
   //           Log.createLog({ 'level': 'trace' }, stream)
   //
   //           Log[levelName](error = new TestError('MESSAGE'))
   //
-  //           messages = getMessages(stream)
+  //           messages = stream.getJSONMessages()
   //
   //         })
   //
@@ -608,12 +626,12 @@ describe('log', () => {
   //
   //         before(() => {
   //
-  //           let stream = new MemoryStream.WritableStream()
+  //           let stream = new Stream()
   //           Log.createLog({ 'level': 'trace' }, stream)
   //
   //           Log[levelName]({ 'a':1, 'b':2, 'c':3 }, levelName.toUpperCase())
   //
-  //           messages = getMessages(stream)
+  //           messages = stream.getJSONMessages()
   //
   //         })
   //
@@ -640,7 +658,7 @@ describe('log', () => {
   //     describe('(when creating a formatted log)', () => {
   //
   //       before(() => {
-  //         Log.createFormattedLog({ 'level': 'trace' }, new MemoryStream.WritableStream())
+  //         Log.createFormattedLog({ 'level': 'trace' }, new Stream())
   //       })
   //
   //       it('should be a function', () => {
@@ -654,9 +672,3 @@ describe('log', () => {
   // }
 
 })
-
-function getMessages (stream) {
-  return stream.toString().split('\n')
-    .filter((message) => !Is.emptyString(message))
-    .map((message) => JSON.parse(message))
-}
