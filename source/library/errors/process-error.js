@@ -12,5 +12,4 @@ ProcessError.prototype = Object.create(Error.prototype)
 ProcessError.prototype.constructor = ProcessError
 ProcessError.prototype.name = ProcessError.name
 
-// module.exports = ProcessError
 export default ProcessError

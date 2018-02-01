@@ -3,12 +3,6 @@
 *.log
 *.out
 *.pid
-/coverage
-/library
+*.png
+/distributables
 /node_modules
-/process
-/sandbox
-/server
-/tests
-/www
-/webpack.config.js

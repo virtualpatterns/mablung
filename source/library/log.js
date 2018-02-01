@@ -1,256 +1,184 @@
+import FileSystem from 'fs'
+import Utilities from 'util'
 import Is from '@pwn/is'
 import IsNode from 'detect-node'
 import Pad from 'pad'
-import Utilities from 'util'
+import Pino from 'pino'
+import Stream from 'stream'
 
-let Log = null
+const Process = process
 
-if (IsNode) {
+const Log = Object.create(Pino)
 
-  const Winston = require('winston')
+Log.getParameters = function (parameters) {
 
-  const Path = require('./path')
-  const Process = require('./process')
-
-  Log = Object.create(Winston)
-
-  Log.format = function (...parameters) {
-
-    let options = null
-
-    switch (parameters.length) {
-      case 0:
-        options = {
-          'level': 'debug',
-          'message': ''
-        }
-        break
-      case 1:
-        options = Is.string(parameters[0]) ? {
-          'level': 'debug',
-          'message': parameters[0]
-        } : parameters[0]
-        break
-      default:
-        options = {
-          'level': parameters.shift(),
-          'message': Utilities.format.apply(Utilities.format, parameters)
-        }
-    }
-
-    return Utilities.format(
-      '%s %d %s %s',
-      new Date().toISOString(),
-      Process.pid,
-      Pad(options.level.toUpperCase(), 5),
-      options.message ? options.message : '')
-
-  }
-
-  Log.addConsole = function (level = 'debug') {
-
-    // try {
-
-      this.add(Winston.transports.Console, {
-        'formatter': this.format,
-        'level': level,
-        'timestamp': true
-      })
-
-      this.debug(`- Log.addConsole('${level}') { ... }`)
-
-    // }
-    // catch (error) {
-    //   this.error(`- Log.addConsole('${level}') { ... }`)
-    //   this.error('-   error.message=%j', error.message)
-    //   this.error('-   error.stack ...\n\n%s\n\n', error.stack)
-    // }
-
-  }
-
-  Log.removeConsole = function () {
-    this.remove(Winston.transports.Console)
-  }
-
-  Log.addFile = function (path, level = 'debug') {
-
-    // try {
-
-      this.add(Winston.transports.File, {
-        'name': path,
-        'filename': path,
-        'formatter': this.format,
-        'json': false,
-        'level': level,
-        'timestamp': true
-      })
-
-      this.debug(`- Log.addFile('${Path.trim(path)}', '${level}') { ... }`)
-
-    // }
-    // catch (error) {
-    //   this.error(`- Log.addFile('${Path.trim(path)}', '${level}') { ... }`)
-    //   this.error('-   error.message=%j', error.message)
-    //   this.error('-   error.stack ...\n\n%s\n\n', error.stack)
-    // }
-
-  }
-
-  Log.removeFile = function (path) {
-    this.remove(path)
-  }
-
-  Log.clear()
-  // console.log('Log.clear()')
-
-} else {
-
-  Log = Object.create({})
-
-  Log.log = function(...parameters) {
-
-    let level = parameters.shift().toUpperCase()
-    let levelFn = null
-
-    if (window.callPhantom) {
-      levelFn = this.logPhantom.bind(this)
-    } else {
-      switch (level) {
-        case 'LOG':
-          levelFn = console.log.bind(console)
-          break
-        case 'ERROR':
-          levelFn = console.error.bind(console)
-          break
-        case 'WARN':
-          levelFn = console.warn.bind(console)
-          break
-        case 'INFO':
-          levelFn = console.info.bind(console)
-          break
-        case 'DEBUG':
-          levelFn = console.debug.bind(console)
-          break
-        default:
-          levelFn = console.log.bind(console)
-      }
-    }
-
-    if (Is.string(parameters[0])) {
-
-      let message = null
-      message = Utilities.format.apply(Utilities.format, parameters)
-
-      message = Utilities.format( '%s %s %s',
-                                  new Date().toISOString(),
-                                  Pad(level, 5),
-                                  message || '')
-
-      levelFn(message)
-
-    } else if (parameters[0] instanceof Error) {
-
-      let error = parameters[0]
-
-      this.log(level, '-   error.message=%j', error.message)
-      this.log(level, '-   error.stack ...\n\n%s\n\n', error.stack)
-
-    }
-    else {
-
-      let object = parameters.shift()
-
-      let message = null
-      message = Utilities.format( '%s %s ...',
-                                  new Date().toISOString(),
-                                  Pad(level, 5))
-
-      levelFn(`${message}\n`)
-      levelFn(`${Utilities.inspect(object, {
-        'depth': null
-      })}\n`)
-
-    }
-
-  }
-
-  Log.logPhantom = function(message) {
-    window.callPhantom({
-      'message': message
-    })
-  }
-
-  Log.error = function(...parameters) {
-    parameters.unshift('error')
-    this.log.apply(this, parameters)
-  }
-
-  Log.warn = function(...parameters) {
-    parameters.unshift('warn')
-    this.log.apply(this, parameters)
-  }
-
-  Log.info = function(...parameters) {
-    parameters.unshift('info')
-    this.log.apply(this, parameters)
-  }
-
-  Log.debug = function(...parameters) {
-    parameters.unshift('debug')
-    this.log.apply(this, parameters)
-  }
-
-}
-
-Log.inspect = function (...parameters) {
-
-  let level = null
-  let name = null
-  let object = null
-  let depth = null
+  let options = null
+  let stream = null
 
   switch (parameters.length) {
     case 0:
-      // break
+      options = {}
+      stream = Process.stdout
+      break
     case 1:
-      level = 'debug'
-      name = 'Log.inspect(...parameters) { ... }'
-      object = parameters.length <= 0 ? undefined : parameters[0]
-      depth = null
-      break
-    case 2:
-      level = 'debug'
-      name = parameters[0]
-      object = parameters[1]
-      depth = null
-      break
-    case 3:
-      level = 'debug'
-      name = parameters[0]
-      object = parameters[1]
-      depth = parameters[2]
+
+      switch (true) {
+        case parameters[0] instanceof Stream.Writable:
+        case Is.function(parameters[0]._write):
+        case Is.function(parameters[0]._writev):
+          options = {}
+          stream = parameters[0]
+          break
+        case Is.string(parameters[0]):
+          options = {}
+          stream = FileSystem.createWriteStream(parameters[0], {
+            'flags': 'a',
+            'encoding': 'utf8',
+            'autoClose': true
+          })
+          break
+        default:
+          options = parameters[0]
+          stream = Process.stdout
+      }
+
       break
     default:
-      level = parameters[0]
-      name = parameters[1]
-      object = parameters[2]
-      depth = parameters[3]
+      options = parameters[0]
+      stream = Is.string(parameters[1]) ? FileSystem.createWriteStream(parameters[1], {
+        'flags': 'a',
+        'encoding': 'utf8',
+        'autoClose': true
+      }) : parameters[1]
   }
 
-  if (Is.string(object)) {
-    this.log(level, `- ${name}\n\n${object}\n`)
+  return [ options, stream ]
+
+}
+
+Log.format = function (data) {
+
+  let string = data.name ? `${data.name} ` : ''
+
+  if (IsNode) {
+    string += Utilities.format(
+      '%s %s %s %s %s',
+      new Date(data.time).toISOString(),
+      data.hostname,
+      data.pid,
+      Pad(Log.levels.labels[data.level].toUpperCase(), 5),
+      data[this.messageKey || 'msg'] || ''
+    )
   } else {
-    this.log(level, `- ${name}\n\n${object ? Utilities.inspect(object, {
-      'depth': depth,
-      'showHidden': true
-    }) : object}\n${IsNode ? '' : '\n'}`)
+    string += Utilities.format(
+      '%s %s %s',
+      new Date(data.time).toISOString(),
+      Pad(Log.levels.labels[data.level].toUpperCase(), 5),
+      data.msg || ''
+    )
+  }
+
+  if (data.stack) {
+    string += `\n\n${data.stack}\n${IsNode ? '' : '\n'}`
+  } else {
+
+    let _data = Object.assign({}, data)
+
+    delete _data.hostname
+    delete _data.level
+    delete _data.name
+    delete _data.pid
+    delete _data.time
+    delete _data.v
+
+    if (IsNode) {
+      delete _data[this.messageKey || 'msg']
+    } else {
+      delete _data.msg
+    }
+
+    if (!Is.emptyObject(_data)) {
+      string += `\n\n${Utilities.inspect(_data, { 'depth': null, 'maxArrayLength': null, 'showHidden': true })}\n${IsNode ? '' : '\n'}`
+    }
+
+  }
+
+  return string
+
+}
+
+Log.createLog = function (...parameters) {
+
+  let [ userLogOptions, userStream ] = this.getParameters(parameters)
+
+  let defaultLogOptions = null
+
+  if (IsNode) {
+    defaultLogOptions = { 'level': 'debug' }
+  } else {
+    defaultLogOptions = {
+      'browser': {
+        'asObject': true,
+        'serialize': true
+      },
+      'level': 'debug'
+    }
+  }
+
+  let logOptions = Object.assign(defaultLogOptions, userLogOptions)
+  let log = Pino.call(this, logOptions, userStream)
+
+  for (let level in this.levels.values) {
+    this[level] = (...parameters) => log[level].apply(log, parameters)
+  }
+
+  Log.debug(Is.emptyObject(logOptions) ? {} : { 'logOptions': logOptions }, 'Log.createLog(...parameters) { ... }')
+
+}
+
+Log.createFormattedLog = function (...parameters) {
+
+  let [ userLogOptions, userStream ] = this.getParameters(parameters)
+
+  if (IsNode) {
+
+    let userFormatOptions = userLogOptions.prettyPrint ? userLogOptions.prettyPrint : {}
+
+    delete userLogOptions.prettyPrint
+
+    let defaultFormatOptions = {
+      'formatter': this.format
+    }
+
+    let formatOptions = userFormatOptions == true ? {} : Object.assign(defaultFormatOptions, userFormatOptions)
+
+    let formattedStream = Pino.pretty(formatOptions)
+    formattedStream.pipe(userStream)
+
+    this.createLog(userLogOptions, formattedStream)
+
+    Log.debug(Is.emptyObject(formatOptions) ? {} : { 'formatOptions': formatOptions }, 'Log.createFormattedLog(...parameters) { ... }')
+
+  } else {
+
+    let defaultLogOptions = {
+      'browser': {
+        'asObject': true,
+        'serialize': true,
+        'write': (data) => {
+          console.log(this.format(data)) // eslint-disable-line no-console
+        }
+      }
+    }
+
+    let logOptions = Object.assign(defaultLogOptions, userLogOptions)
+
+    this.createLog(logOptions)
+
+    Log.debug('Log.createFormattedLog(...parameters) { ... }')
+
   }
 
 }
 
-Log.line = function (level = 'debug') {
-  this.log(level, '-'.repeat(80))
-}
-
-// module.exports = Log
 export default Log
