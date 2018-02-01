@@ -1,4 +1,4 @@
-import FileSystem from 'fs' // require('./file-system')
+import FileSystem from 'fs'
 
 import Configuration from '../configuration'
 import Path from './path'
@@ -67,7 +67,7 @@ Process.createPID = function (path) {
         FileSystem.accessSync(path, FileSystem.F_OK)
         FileSystem.unlinkSync(path)
       } catch (error) {
-        // Do nothing
+        // OK
       }
     })
 

@@ -1,4 +1,4 @@
-import FileSystem from 'fs' // require('./file-system')
+import FileSystem from 'fs'
 import Utilities from 'util'
 import Is from '@pwn/is'
 import IsNode from 'detect-node'
@@ -6,7 +6,7 @@ import Pad from 'pad'
 import Pino from 'pino'
 import Stream from 'stream'
 
-const Process = process // require('./process')
+const Process = process
 
 const Log = Object.create(Pino)
 

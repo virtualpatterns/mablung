@@ -21,8 +21,7 @@ module.exports = {
     ]
   },
   'node': {
-    'fs': 'empty' //,
-    // 'process': 'mock'
+    'fs': 'empty'
   },
   'output': {
     'path': `${process.cwd()}/distributables/www/scripts`,

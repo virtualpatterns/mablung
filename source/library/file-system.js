@@ -24,26 +24,10 @@ FileSystem.accessUnlink = function (path, mode, callback) {
 }
 
 FileSystem.whenFileExists = function (timeout, maximumDuration, path) {
-
-  // const Log = require('./log').Log
-  // const Path = require('./path')
-  // const Process = require('./process')
-
-  // console.log(`Path.trim=${Path.trim}`) // eslint-disable-line no-console
-
-  // Log.debug(`FileSystem.whenFileExists(${timeout}, ${maximumDuration}, '${Path.trim(path)}') { ... }`)
-
   return Process.when(timeout, maximumDuration, (callback) => FileSystem.access(path, FileSystem.F_OK, callback))
-
 }
 
 FileSystem.whenFileNotExists = function (timeout, maximumDuration, path) {
-
-  // const Log = require('./log').Log
-  // const Path = require('./path')
-  // const Process = require('./process')
-
-  // Log.debug(`FileSystem.whenFileNotExists(${timeout}, ${maximumDuration}, '${Path.trim(path)}') { ... }`)
 
   return Process.when(timeout, maximumDuration, (callback) => {
     FileSystem.access(path, FileSystem.F_OK, (error) => {
