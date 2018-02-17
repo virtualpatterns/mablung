@@ -10,6 +10,10 @@ const Process = process
 
 const Log = Object.create(Pino)
 
+for (let level in Log.levels.values) {
+  Log[level] = function () {}
+}
+
 Log.getParameters = function (parameters) {
 
   let options = null
@@ -125,12 +129,14 @@ Log.createLog = function (...parameters) {
     }
   }
 
+  for (let level in this.levels.values) {
+    delete this[level]
+  }
+
   let logOptions = Object.assign(defaultLogOptions, userLogOptions)
   let log = Pino.call(this, logOptions, userStream)
 
-  for (let level in this.levels.values) {
-    this[level] = (...parameters) => log[level].apply(log, parameters)
-  }
+  Object.setPrototypeOf(this, log)
 
   Log.debug(Is.emptyObject(logOptions) ? {} : { 'logOptions': logOptions }, 'Log.createLog(...parameters) { ... }')
 

@@ -5,7 +5,6 @@ import Configuration from '../configuration'
 import { Log } from '../index'
 import Path from '../library/path'
 
-const REGEXP_MOCHA = /^\/www\/vendor\/mocha\/(.*)$/
 const REGEXP_STATIC = /^\/www\/(.*)$/
 
 // Log.createFormattedLog()
@@ -40,14 +39,6 @@ server.get('/', (request, response, next) => {
 
 server.get('/www', (request, response, next) => {
   response.redirect('/www/index.html', next)
-})
-
-server.get(REGEXP_MOCHA, (request, response, next) => {
-  RESTPlugins.serveStatic({
-    'directory': Path.join(__dirname, '..', '..', 'node_modules', 'mocha'),
-    'file': request.params[0],
-    'maxAge': 0
-  })(request, response, next)
 })
 
 server.get(REGEXP_STATIC, (request, response, next) => {

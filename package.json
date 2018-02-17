@@ -39,7 +39,6 @@
     "npm-check-updates": "^2.10.3",
     "object-merge": "^2.5.1",
     "puppeteer": "^1.0.0",
-    "quick-local-ip": "^1.0.7",
     "restify": "^6.3.4",
     "restify-plugins": "^1.6.0",
     "sinon": "^4.1.6",
@@ -54,6 +53,7 @@
     "mkdirp": "^0.5.1",
     "pad": "^2.0.3",
     "pino": "^4.10.3",
+    "quick-local-ip": "^1.0.7",
     "touch": "^3.1.0"
   }
 }

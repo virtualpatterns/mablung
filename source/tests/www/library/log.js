@@ -61,6 +61,20 @@ describe('log', () => {
     Assert.ok(await Page.evaluate(() => window.Sinon))
   })
 
+  for (let level of Object.entries(Log.levels.values)) {
+
+    let [ levelName ] = level
+
+    describe(levelName, () => {
+
+      it('should be defined', async () => {
+        Assert.ok(await Page.evaluate((levelName) => window.Is.function(window.Log[levelName]), levelName))
+      })
+
+    })
+
+  }
+
   describe('createLog', () => {
 
     describe('(when passing no arguments)', () => {
@@ -81,6 +95,10 @@ describe('log', () => {
           'browser': { 'asObject': true },
           'level': 'debug'
         }))))
+      })
+
+      it('should return the prototype', async () => {
+        Assert.ok(await Page.evaluate(() => window.Pino.call.returned(Object.getPrototypeOf(window.Log))))
       })
 
       it('should create one message', () => {

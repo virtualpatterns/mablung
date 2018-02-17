@@ -58,6 +58,20 @@ const REGEXP_OBJECT_MESSAGE = new RegExp(`^${Configuration.tests.patterns.prefix
 
 describe('log', () => {
 
+  for (let level of Object.entries(Log.levels.values)) {
+
+    let [ levelName ] = level
+
+    describe(`(when calling ${levelName})`, () => {
+
+      it('should be defined', async () => {
+        Assert.ok(Is.function(Log[levelName]))
+      })
+
+    })
+
+  }
+
   describe('createLog', () => {
 
     describe('(when passing a stream)', () => {
@@ -82,6 +96,10 @@ describe('log', () => {
 
       it('should call Pino.call with valid arguments', () => {
         Assert.ok(Pino.call.calledWith(Log, Sinon.match({ 'level': 'debug' }), stream))
+      })
+
+      it('should return the prototype', () => {
+        Assert.ok(Pino.call.returned(Object.getPrototypeOf(Log)))
       })
 
       it('should create one message', () => {
