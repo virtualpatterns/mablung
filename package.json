@@ -16,7 +16,7 @@
     "url": "https://github.com/virtualpatterns/mablung"
   },
   "scripts": {
-    "refresh": "rm -Rf node_modules distributables/* && npm install",
+    "refresh": "rm -Rf node_modules distributables/* && npm install && npm audit fix",
     "clean": "rm -Rf distributables/*",
     "lint": "npm run clean && eslint --ignore-path .gitignore source/tasks",
     "build": "npm run lint && babel source/configuration.js --out-file distributables/configuration.js --quiet --source-maps && babel source/tasks --copy-files --out-dir distributables/tasks --quiet --source-maps",
@@ -37,7 +37,7 @@
     "json5": "^2.1.0",
     "memory-streams": "^0.1.2",
     "mocha": "^5.0.0",
-    "npm-check-updates": "^2.10.3",
+    "npm-check-updates": "^2.14.2",
     "object-merge": "^2.5.1",
     "pino-pretty": "^2.2.2",
     "puppeteer": "^1.0.0",
