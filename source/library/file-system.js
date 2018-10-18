@@ -1,7 +1,7 @@
-import Directory from 'mkdirp'
 import _FileSystem from 'fs'
-import Promisify from 'es6-promisify'
+import IsNode from 'detect-node'
 import Touch from 'touch'
+import Utilities from 'util'
 
 import Path from './path'
 import Process from './process'
@@ -10,7 +10,6 @@ import ArgumentError from './errors/argument-error'
 
 const FileSystem = Object.create(_FileSystem)
 
-FileSystem.mkdirp = Directory
 FileSystem.touch = Touch
 
 FileSystem.accessUnlink = function (path, mode, callback) {
@@ -41,12 +40,17 @@ FileSystem.whenFileNotExists = function (timeout, maximumDuration, path) {
 
 }
 
-FileSystem.promisedAccess = Promisify(FileSystem.access)
-FileSystem.promisedAccessUnlink = Promisify(FileSystem.accessUnlink)
-FileSystem.promisedMkdirP = Promisify(FileSystem.mkdirp)
-FileSystem.promisedReadFile = Promisify(FileSystem.readFile)
-FileSystem.promisedTouch = Promisify(FileSystem.touch)
-FileSystem.promisedUnlink = Promisify(FileSystem.unlink)
-FileSystem.promisedWriteFile = Promisify(FileSystem.writeFile)
+if (IsNode) {
+
+  FileSystem.promisedAccess = Utilities.promisify ? Utilities.promisify(FileSystem.access) : null
+  FileSystem.promisedAccessUnlink = Utilities.promisify ? Utilities.promisify(FileSystem.accessUnlink) : null
+  FileSystem.promisedMakeDir = Utilities.promisify ? Utilities.promisify(FileSystem.mkdir) : null
+  FileSystem.promisedReadDir = Utilities.promisify ? Utilities.promisify(FileSystem.readdir) : null
+  FileSystem.promisedReadFile = Utilities.promisify ? Utilities.promisify(FileSystem.readFile) : null
+  FileSystem.promisedTouch = Utilities.promisify ? Utilities.promisify(FileSystem.touch) : null
+  FileSystem.promisedUnlink = Utilities.promisify ? Utilities.promisify(FileSystem.unlink) : null
+  FileSystem.promisedWriteFile = Utilities.promisify ? Utilities.promisify(FileSystem.writeFile) : null
+
+}
 
 export default FileSystem

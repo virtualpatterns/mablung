@@ -7,3 +7,4 @@
 *.png
 /distributables
 /node_modules
+/source/sandbox

@@ -40,7 +40,6 @@ const CREATE_LOG_MESSAGE = Merge(MESSAGE, {
 })
 
 const REGEXP_CREATE_LOG_MESSAGE = new RegExp(`^${Configuration.tests.patterns.prefixBrowser} DEBUG Log.createLog\\(\\.{3}parameters\\) \\{ .{3} \\}.*$`, 'm') // /^\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d\.\d+([+-][0-2]\d:[0-5]\d|Z) DEBUG Log.createLog\(\.{3}parameters\) \{ .{3} \}.*$/m
-const REGEXP_CREATE_FORMATTED_LOG_MESSAGE = new RegExp(`^${Configuration.tests.patterns.prefixBrowser} DEBUG Log.createFormattedLog\\(\\.{3}parameters\\) \\{ .{3} \\}$`, 'm') // /^\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d\.\d+([+-][0-2]\d:[0-5]\d|Z) DEBUG Log.createFormattedLog\(\.{3}parameters\) \{ .{3} \}.*$/m
 const REGEXP_OBJECT_MESSAGE = new RegExp(`^${Configuration.tests.patterns.prefixBrowser} TRACE MESSAGE\n\n\\{ a\\: 1, b\\: 2, c\\: 3 \\}\n\n$`, 'm')
 
 describe('log', () => {
@@ -169,7 +168,7 @@ describe('log', () => {
 
       before(async () => {
         await Page.evaluate(() => window.Sinon.spy(window.Log, 'createLog'))
-        messages = await Page.evaluateConsole(() => window.Log.createFormattedLog(), 2)
+        messages = await Page.evaluateConsole(() => window.Log.createFormattedLog(), 1)
       })
 
       it('should call Log.createLog', async () => {
@@ -181,21 +180,24 @@ describe('log', () => {
           'browser': {
             'asObject': true,
             'serialize': true,
-            'write': window.Sinon.match.func
+            'write': {
+              'trace': window.Sinon.match.func,
+              'debug': window.Sinon.match.func,
+              'info': window.Sinon.match.func,
+              'warn': window.Sinon.match.func,
+              'error': window.Sinon.match.func,
+              'fatal': window.Sinon.match.func
+            }
           }
         }))))
       })
 
-      it('should create two messages', () => {
-        Assert.equal(messages.length, 2)
+      it('should create one message', () => {
+        Assert.equal(messages.length, 1)
       })
 
       it('should create a valid Log.createLog message', () => {
         Assert.ok(REGEXP_CREATE_LOG_MESSAGE.test(messages[0]))
-      })
-
-      it('should create a valid Log.createFormattedLog message', () => {
-        Assert.ok(REGEXP_CREATE_FORMATTED_LOG_MESSAGE.test(messages[1]))
       })
 
       after(async () => {
@@ -204,7 +206,7 @@ describe('log', () => {
 
     })
 
-    describe('(when passing non-formatting options)', () => {
+    describe('(when passing options)', () => {
 
       before(async () => {
         await Page.evaluate(() => {
@@ -218,71 +220,16 @@ describe('log', () => {
           'browser': {
             'asObject': true,
             'serialize': true,
-            'write': window.Sinon.match.func
+            'write': {
+              'trace': window.Sinon.match.func,
+              'debug': window.Sinon.match.func,
+              'info': window.Sinon.match.func,
+              'warn': window.Sinon.match.func,
+              'error': window.Sinon.match.func,
+              'fatal': window.Sinon.match.func
+            }
           },
           'level': 'trace'
-        }))))
-      })
-
-      after(async () => {
-        await Page.evaluate(() => window.Log.createLog.restore())
-      })
-
-    })
-
-    describe('(when passing basic formatting options)', () => {
-
-      before(async () => {
-        await Page.evaluate(() => {
-          window.Sinon.spy(window.Log, 'createLog')
-          window.Log.createFormattedLog({
-            'level': 'trace',
-            'prettyPrint': true
-          })
-        })
-      })
-
-      it('should call Log.createLog with valid arguments', async () => {
-        Assert.ok(await Page.evaluate(() => window.Log.createLog.calledWith(window.Sinon.match({
-          'browser': {
-            'asObject': true,
-            'serialize': true,
-            'write': window.Sinon.match.func
-          },
-          'level': 'trace',
-          'prettyPrint': true
-        }))))
-      })
-
-      after(async () => {
-        await Page.evaluate(() => window.Log.createLog.restore())
-      })
-
-    })
-
-    describe('(when passing advanced formatting options)', () => {
-
-      before(async () => {
-
-        await Page.evaluate(() => {
-          window.Sinon.spy(window.Log, 'createLog')
-          window.Log.createFormattedLog({
-            'level': 'trace',
-            'prettyPrint': { 'levelFirst': true }
-          })
-        })
-
-      })
-
-      it('should call Log.createLog with valid arguments', async () => {
-        Assert.ok(await Page.evaluate(() => window.Log.createLog.calledWith(window.Sinon.match({
-          'browser': {
-            'asObject': true,
-            'serialize': true,
-            'write': window.Sinon.match.func
-          },
-          'level': 'trace',
-          'prettyPrint': { 'levelFirst': true }
         }))))
       })
 
@@ -303,16 +250,16 @@ describe('log', () => {
           messages = await Page.evaluateConsole(() => {
             window.Log.createFormattedLog({ 'level': 'trace' })
             window.Log.trace({ 'a': 1, 'b': 2, 'c': 3 }, 'MESSAGE')
-          }, 3)
+          }, 2)
 
         })
 
-        it('should create three messages', () => {
-          Assert.equal(messages.length, 3)
+        it('should create two messages', () => {
+          Assert.equal(messages.length, 2)
         })
 
         it('should create a valid message', () => {
-          Assert.ok(REGEXP_OBJECT_MESSAGE.test(messages[2]))
+          Assert.ok(REGEXP_OBJECT_MESSAGE.test(messages[1]))
         })
 
       })
@@ -332,7 +279,7 @@ describe('log', () => {
           messages = await Page.evaluateConsole(() => {
             window.Log.createFormattedLog({ 'level': 'trace' })
             window.Log.trace(window._error)
-          }, 3)
+          }, 2)
 
           // console.log(`\n${stack}\n`) // eslint-disable-line no-console
           // console.log(`\n${messages[2]}\n`) // eslint-disable-line no-console
@@ -344,8 +291,8 @@ describe('log', () => {
 
         })
 
-        it('should create three messages', () => {
-          Assert.equal(messages.length, 3)
+        it('should create two messages', () => {
+          Assert.equal(messages.length, 2)
         })
 
         it('should create a valid message', () => {
@@ -353,7 +300,7 @@ describe('log', () => {
           let _stack = stack.replace(/[/.()]/g, '\\$&')
           let _pattern = new RegExp(`^${Configuration.tests.patterns.prefixBrowser} TRACE ERROR\n\n${_stack}\n\n.*$`, 'm')
 
-          Assert.ok(_pattern.test(messages[2]))
+          Assert.ok(_pattern.test(messages[1]))
 
         })
 

@@ -1,13 +1,9 @@
 import REST from 'restify'
-import RESTPlugins from 'restify-plugins'
 
 import Configuration from '../configuration'
 import { Log } from '../index'
 import Path from '../library/path'
 
-const REGEXP_STATIC = /^\/www\/(.*)$/
-
-// Log.createFormattedLog()
 Log.createFormattedLog(Configuration.server.logPath)
 
 Log.debug({ 'Configuration': Configuration })
@@ -26,7 +22,7 @@ server.use((request, response, next) => {
 })
 
 server.get('/favicon.ico', (request, response, next) => {
-  RESTPlugins.serveStatic({
+  REST.plugins.serveStatic({
     'directory': Path.join(__dirname, '..', 'www', 'resources'),
     'file': 'application.ico',
     'maxAge': 0
@@ -41,12 +37,12 @@ server.get('/www', (request, response, next) => {
   response.redirect('/www/index.html', next)
 })
 
-server.get(REGEXP_STATIC, (request, response, next) => {
-  RESTPlugins.serveStatic({
-    'directory': Path.join(__dirname, '..', 'www'),
-    'file': request.params[0],
+server.get('/www/*', (request, response, next) => {
+  REST.plugins.serveStatic({
+    'directory': Path.join(__dirname, '..'),
     'maxAge': 0
   })(request, response, next)
+
 })
 
 server.listen(Configuration.server.port, Configuration.server.address, () => {

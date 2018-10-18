@@ -1,5 +1,5 @@
 import JSON5 from 'json5'
-// import WebPack from 'webpack'
+import WebPack from 'webpack'
 
 import { FileSystem } from './index'
 
@@ -8,6 +8,7 @@ const BabelRC = JSON5.parse(FileSystem.readFileSync(`${__dirname}/../.babelrc`, 
 module.exports = {
   'devtool': 'source-map',
   'entry': `${process.cwd()}/source/www/scripts/index.js`,
+  'mode': 'none',
   'module': {
     'rules': [
       {
@@ -26,5 +27,8 @@ module.exports = {
   'output': {
     'path': `${process.cwd()}/distributables/www/scripts`,
     'filename': 'index.js'
-  }
+  },
+  plugins: [
+    new WebPack.ProgressPlugin()
+  ]
 }

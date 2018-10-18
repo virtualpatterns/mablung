@@ -1,4 +1,3 @@
-import Address from 'quick-local-ip'
 
 const PORT = 8080
 
@@ -35,7 +34,7 @@ export default {
       'waitTimeout': 15000
     },
     'screenshotPath': `${process.cwd()}/mablung-tests.png`,
-    'serverUrl': `http://${Address.getLocalIP4()}:${PORT}`,
+    'serverUrl': `http://0.0.0.0:${PORT}`,
   }
 
 }

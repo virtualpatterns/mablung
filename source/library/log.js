@@ -2,7 +2,6 @@ import FileSystem from 'fs'
 import Utilities from 'util'
 import Is from '@pwn/is'
 import IsNode from 'detect-node'
-import Pad from 'pad'
 import Pino from 'pino'
 import Stream from 'stream'
 
@@ -60,54 +59,61 @@ Log.getParameters = function (parameters) {
 
 }
 
-Log.format = function (data) {
+Log.format = function (options) {
 
-  let string = data.name ? `${data.name} ` : ''
+  return function (data) {
 
-  if (IsNode) {
-    string += Utilities.format(
-      '%s %s %s %s %s',
-      new Date(data.time).toISOString(),
-      data.hostname,
-      data.pid,
-      Pad(Log.levels.labels[data.level].toUpperCase(), 5),
-      data[this.messageKey || 'msg'] || ''
-    )
-  } else {
-    string += Utilities.format(
-      '%s %s %s',
-      new Date(data.time).toISOString(),
-      Pad(Log.levels.labels[data.level].toUpperCase(), 5),
-      data.msg || ''
-    )
-  }
-
-  if (data.stack) {
-    string += `\n\n${data.stack}\n${IsNode ? '' : '\n'}`
-  } else {
-
-    let _data = Object.assign({}, data)
-
-    delete _data.hostname
-    delete _data.level
-    delete _data.name
-    delete _data.pid
-    delete _data.time
-    delete _data.v
+    let string = data.name ? `${data.name} ` : ''
 
     if (IsNode) {
-      delete _data[this.messageKey || 'msg']
+      string += Utilities.format(
+        '%s %s %s %s %s',
+        new Date(data.time).toISOString(),
+        data.hostname,
+        data.pid,
+        Log.levels.labels[data.level].toUpperCase().padStart(5),
+        data[options.messageKey || 'msg'] || ''
+      )
     } else {
-      delete _data.msg
+      string += Utilities.format(
+        '%s %s %s',
+        new Date(data.time).toISOString(),
+        Log.levels.labels[data.level].toUpperCase().padStart(5),
+        data.msg || ''
+      )
     }
 
-    if (!Is.emptyObject(_data)) {
-      string += `\n\n${Utilities.inspect(_data, { 'depth': null, 'maxArrayLength': null, 'showHidden': true })}\n${IsNode ? '' : '\n'}`
+    if (data.stack) {
+      string += `\n\n${data.stack}\n\n`
+    } else {
+
+      let _data = Object.assign({}, data)
+
+      delete _data.hostname
+      delete _data.level
+      delete _data.name
+      delete _data.pid
+      delete _data.time
+      delete _data.v
+
+      if (IsNode) {
+        delete _data[options.messageKey || 'msg']
+      } else {
+        delete _data.msg
+      }
+
+      if (!Is.emptyObject(_data)) {
+        string += `\n\n${Utilities.inspect(_data, { 'depth': null, 'maxArrayLength': null, 'showHidden': true })}\n\n`
+      }
+      else {
+        string += '\n'
+      }
+
     }
+
+    return string
 
   }
-
-  return string
 
 }
 
@@ -145,25 +151,18 @@ Log.createLog = function (...parameters) {
 Log.createFormattedLog = function (...parameters) {
 
   let [ userLogOptions, userStream ] = this.getParameters(parameters)
+  let logOptions = null
 
   if (IsNode) {
 
-    let userFormatOptions = userLogOptions.prettyPrint ? userLogOptions.prettyPrint : {}
-
-    delete userLogOptions.prettyPrint
-
-    let defaultFormatOptions = {
-      'formatter': this.format
+    let defaultLogOptions = {
+      'prettyPrint': true,
+      'prettifier': Log.format
     }
 
-    let formatOptions = userFormatOptions == true ? {} : Object.assign(defaultFormatOptions, userFormatOptions)
+    logOptions = Object.assign(defaultLogOptions, userLogOptions)
 
-    let formattedStream = Pino.pretty(formatOptions)
-    formattedStream.pipe(userStream)
-
-    this.createLog(userLogOptions, formattedStream)
-
-    Log.debug(Is.emptyObject(formatOptions) ? {} : { 'formatOptions': formatOptions }, 'Log.createFormattedLog(...parameters) { ... }')
+    this.createLog(logOptions, userStream)
 
   } else {
 
@@ -171,17 +170,32 @@ Log.createFormattedLog = function (...parameters) {
       'browser': {
         'asObject': true,
         'serialize': true,
-        'write': (data) => {
-          console.log(this.format(data)) // eslint-disable-line no-console
+        'write': {
+          'trace': (data) => {
+            console.trace(Log.format({})(data)) // eslint-disable-line no-console
+          },
+          'debug': (data) => {
+            console.debug(Log.format({})(data)) // eslint-disable-line no-console
+          },
+          'info': (data) => {
+            console.info(Log.format({})(data)) // eslint-disable-line no-console
+          },
+          'warn': (data) => {
+            console.warn(Log.format({})(data)) // eslint-disable-line no-console
+          },
+          'error': (data) => {
+            console.error(Log.format({})(data)) // eslint-disable-line no-console
+          },
+          'fatal': (data) => {
+            console.error(Log.format({})(data)) // eslint-disable-line no-console
+          }
         }
       }
     }
 
-    let logOptions = Object.assign(defaultLogOptions, userLogOptions)
+    logOptions = Object.assign(defaultLogOptions, userLogOptions)
 
     this.createLog(logOptions)
-
-    Log.debug('Log.createFormattedLog(...parameters) { ... }')
 
   }
 

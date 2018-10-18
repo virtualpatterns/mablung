@@ -53,7 +53,6 @@ const CREATE_LOG_MESSAGE = Merge(MESSAGE, {
 })
 
 const REGEXP_CREATE_LOG_MESSAGE = new RegExp(`^${Configuration.tests.patterns.prefixNode} DEBUG Log.createLog\\(\\.{3}parameters\\) \\{ .{3} \\}$`, 'm')
-const REGEXP_CREATE_FORMATTED_LOG_MESSAGE = new RegExp(`^${Configuration.tests.patterns.prefixNode} DEBUG Log.createFormattedLog\\(\\.{3}parameters\\) \\{ .{3} \\}$`, 'm')
 const REGEXP_OBJECT_MESSAGE = new RegExp(`^${Configuration.tests.patterns.prefixNode} TRACE MESSAGE\n\n\\{ a\\: 1, b\\: 2, c\\: 3 \\}\n$`, 'm')
 
 describe('log', () => {
@@ -90,11 +89,11 @@ describe('log', () => {
 
       })
 
-      it('should call Pino.call', () => {
+      it('should call Pino', () => {
         Assert.equal(Pino.call.callCount, 1)
       })
 
-      it('should call Pino.call with valid arguments', () => {
+      it('should call Pino with valid arguments', () => {
         Assert.ok(Pino.call.calledWith(Log, Sinon.match({ 'level': 'debug' }), stream))
       })
 
@@ -150,7 +149,7 @@ describe('log', () => {
 
       })
 
-      it('should call Pino.call with valid arguments', () => {
+      it('should call Pino with valid arguments', () => {
         Assert.ok(Pino.call.calledWith(Log, Sinon.match({ 'level': 'trace' }), stream))
       })
 
@@ -170,101 +169,62 @@ describe('log', () => {
 
     describe('(when passing a stream)', () => {
 
+      let stream = null
       let messages = null
 
       before(() => {
 
-        Sinon.spy(Pino, 'pretty')
+        Sinon.spy(Pino, 'call')
 
-        let stream = new Stream()
+        stream = new Stream()
         Log.createFormattedLog(stream)
 
         messages = stream.getMessages()
 
       })
 
-      it('should call Pino.pretty', () => {
-        Assert.equal(Pino.pretty.callCount, 1)
+      it('should call Pino', () => {
+        Assert.equal(Pino.call.callCount, 1)
       })
 
-      it('should call Pino.pretty with valid arguments', () => {
-        Assert.ok(Pino.pretty.calledWith(Sinon.match({ 'formatter': Log.format })))
+      it('should call Pino with valid arguments', () => {
+        Assert.ok(Pino.call.calledWith(Log, Sinon.match({ 'prettyPrint': true, 'prettifier': Log.format }), stream))
       })
 
-      it('should create two messages', () => {
-        Assert.equal(messages.length, 2)
+      it('should create one message', () => {
+        Assert.equal(messages.length, 1)
       })
 
       it('should create a valid Log.createLog message', () => {
         Assert.ok(REGEXP_CREATE_LOG_MESSAGE.test(messages[0]))
       })
 
-      it('should create a valid Log.createFormattedLog message', () => {
-        Assert.ok(REGEXP_CREATE_FORMATTED_LOG_MESSAGE.test(messages[1]))
-      })
-
       after(() => {
-        Pino.pretty.restore()
+        Pino.call.restore()
       })
 
     })
 
-    describe('(when passing non-formatting options and a stream)', () => {
+    describe('(when passing options and a stream)', () => {
+
+      let stream = null
 
       before(() => {
 
-        Sinon.spy(Pino, 'pretty')
+        Sinon.spy(Pino, 'call')
 
-        Log.createFormattedLog({ 'level': 'trace' }, new Stream())
+        stream = new Stream()
 
-      })
-
-      it('should call Pino.pretty with valid arguments', () => {
-        Assert.ok(Pino.pretty.calledWith(Sinon.match({ 'formatter': Log.format })))
-      })
-
-      after(() => {
-        Pino.pretty.restore()
-      })
-
-    })
-
-    describe('(when passing basic formatting options and a stream)', () => {
-
-      before(() => {
-
-        Sinon.spy(Pino, 'pretty')
-
-        Log.createFormattedLog({ 'level': 'trace', 'prettyPrint': true }, new Stream())
+        Log.createFormattedLog({ 'level': 'trace', 'prettyPrint': { 'levelFirst': true } }, stream)
 
       })
 
-      it('should call Pino.pretty with valid arguments', () => {
-        Assert.ok(Pino.pretty.calledWith(Sinon.match({})))
+      it('should call Pino with valid arguments', () => {
+        Assert.ok(Pino.call.calledWith(Log, Sinon.match({ 'prettyPrint': { 'levelFirst': true }, 'prettifier': Log.format }), stream))
       })
 
       after(() => {
-        Pino.pretty.restore()
-      })
-
-    })
-
-    describe('(when passing advanced formatting options and a stream)', () => {
-
-      before(() => {
-
-        Sinon.spy(Pino, 'pretty')
-
-        Log.createFormattedLog({ 'level': 'trace', 'prettyPrint': { 'levelFirst': true } }, new Stream())
-
-      })
-
-      it('should call Pino.pretty with valid arguments', () => {
-        Assert.ok(Pino.pretty.calledWith(Sinon.match({ 'formatter': Log.format, 'levelFirst': true })))
-      })
-
-      after(() => {
-        Pino.pretty.restore()
+        Pino.call.restore()
       })
 
     })
