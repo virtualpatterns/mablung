@@ -42,14 +42,15 @@ FileSystem.whenFileNotExists = function (timeout, maximumDuration, path) {
 
 if (IsNode) {
 
-  FileSystem.promisedAccess = Utilities.promisify ? Utilities.promisify(FileSystem.access) : null
-  FileSystem.promisedAccessUnlink = Utilities.promisify ? Utilities.promisify(FileSystem.accessUnlink) : null
-  FileSystem.promisedMakeDir = Utilities.promisify ? Utilities.promisify(FileSystem.mkdir) : null
-  FileSystem.promisedReadDir = Utilities.promisify ? Utilities.promisify(FileSystem.readdir) : null
-  FileSystem.promisedReadFile = Utilities.promisify ? Utilities.promisify(FileSystem.readFile) : null
-  FileSystem.promisedTouch = Utilities.promisify ? Utilities.promisify(FileSystem.touch) : null
-  FileSystem.promisedUnlink = Utilities.promisify ? Utilities.promisify(FileSystem.unlink) : null
-  FileSystem.promisedWriteFile = Utilities.promisify ? Utilities.promisify(FileSystem.writeFile) : null
+  FileSystem.promisedAccess = Utilities.promisify(FileSystem.access)
+  FileSystem.promisedAccessUnlink = Utilities.promisify(FileSystem.accessUnlink)
+  FileSystem.promisedMakeDir = Utilities.promisify(FileSystem.mkdir)
+  FileSystem.promisedReadDir = Utilities.promisify(FileSystem.readdir)
+  FileSystem.promisedReadFile = Utilities.promisify(FileSystem.readFile)
+  FileSystem.promisedStat = Utilities.promisify(FileSystem.stat)
+  FileSystem.promisedTouch = Utilities.promisify(FileSystem.touch)
+  FileSystem.promisedUnlink = Utilities.promisify(FileSystem.unlink)
+  FileSystem.promisedWriteFile = Utilities.promisify(FileSystem.writeFile)
 
 }
 
