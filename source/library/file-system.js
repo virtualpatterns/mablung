@@ -1,5 +1,6 @@
 import _FileSystem from 'fs'
 import IsNode from 'detect-node'
+import Copy from 'ncp'
 import Touch from 'touch'
 import Utilities from 'util'
 
@@ -10,6 +11,7 @@ import ArgumentError from './errors/argument-error'
 
 const FileSystem = Object.create(_FileSystem)
 
+FileSystem.copy = Copy
 FileSystem.touch = Touch
 
 FileSystem.accessUnlink = function (path, mode, callback) {
@@ -44,6 +46,7 @@ if (IsNode) {
 
   FileSystem.promisedAccess = Utilities.promisify(FileSystem.access)
   FileSystem.promisedAccessUnlink = Utilities.promisify(FileSystem.accessUnlink)
+  FileSystem.promisedCopy = Utilities.promisify(FileSystem.copy)
   FileSystem.promisedMakeDir = Utilities.promisify(FileSystem.mkdir)
   FileSystem.promisedReadDir = Utilities.promisify(FileSystem.readdir)
   FileSystem.promisedReadFile = Utilities.promisify(FileSystem.readFile)

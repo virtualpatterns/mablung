@@ -24,7 +24,7 @@
     "jake": "npm run build && jake --jakefile distributables/tasks/index.js",
     "upgrade": "npm-check-updates --upgrade"
   },
-  "version": "0.0.17",
+  "version": "0.0.18",
   "devDependencies": {
     "babel-cli": "^6.26.0",
     "babel-core": "^6.26.3",
@@ -51,6 +51,7 @@
     "babel-polyfill": "^6.26.0",
     "detect-node": "^2.0.3",
     "is-relative": "^1.0.0",
+    "ncp": "^2.0.0",
     "pino": "^5.7.0",
     "touch": "^3.1.0"
   }

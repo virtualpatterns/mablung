@@ -1,3 +1,6 @@
+import { assert as Assert } from 'chai'
+import Is from '@pwn/is'
+
 import Configuration from '../../configuration'
 import { FileSystem, Path, Process } from '../../index'
 
@@ -5,7 +8,19 @@ import TestError from '../errors/test-error'
 
 describe('file-system', () => {
 
-  describe('accessUnlink', () => {
+  for (let methodName of [ 'promisedCopy', 'promisedMakeDir', 'promisedReadDir', 'promisedReadFile', 'promisedStat', 'promisedTouch' ]) {
+
+    describe(`(when calling ${methodName})`, () => {
+
+      it('should be defined', async () => {
+        Assert.ok(Is.function(FileSystem[methodName]))
+      })
+
+    })
+
+  }
+
+  describe('promisedAccessUnlink', () => {
 
     describe('(when a file exists)', () => {
 
