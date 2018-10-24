@@ -63,7 +63,7 @@ Log.format = function (options) {
 
   return function (data) {
 
-    // let string = data.name ? `${data.name} ` : ''
+    let string = data.name && !Is.error(data) ? `${data.name} ` : ''
 
     if (IsNode) {
       string += Utilities.format(
