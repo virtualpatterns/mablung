@@ -8,7 +8,7 @@ import TestError from '../errors/test-error'
 
 describe('file-system', () => {
 
-  for (let methodName of [ 'promisedCopy', 'promisedMakeDir', 'promisedReadDir', 'promisedReadFile', 'promisedStat', 'promisedTouch' ]) {
+  for (let methodName of [ 'promisedCopy', 'promisedMakeDir', 'promisedReadDir', 'promisedReadFile', 'promisedRename', 'promisedStat', 'promisedTouch' ]) {
 
     describe(`(when calling ${methodName})`, () => {
 
