@@ -50,6 +50,7 @@ if (IsNode) {
   FileSystem.promisedMakeDir = Utilities.promisify(FileSystem.mkdir)
   FileSystem.promisedReadDir = Utilities.promisify(FileSystem.readdir)
   FileSystem.promisedReadFile = Utilities.promisify(FileSystem.readFile)
+  FileSystem.promisedRename = Utilities.promisify(FileSystem.rename)
   FileSystem.promisedStat = Utilities.promisify(FileSystem.stat)
   FileSystem.promisedTouch = Utilities.promisify(FileSystem.touch)
   FileSystem.promisedUnlink = Utilities.promisify(FileSystem.unlink)
