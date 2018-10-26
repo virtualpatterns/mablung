@@ -10,7 +10,7 @@ Path.isRelative = function(path) {
 }
 
 Path.trim = function (path) {
-  return path.replace(Process.cwd(), '.')
+  return Process.cwd() == '/' ? path : path.replace(Process.cwd(), '.')
 }
 
 export default Path
