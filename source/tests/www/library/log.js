@@ -18,7 +18,7 @@ const CREATE_LOG_MESSAGE = Merge(MESSAGE, {
   'properties': {
     'level': {
       'type': 'number',
-      'enum': [ 20 ]
+      'enum': [ 10 ]
     },
     'msg': {
       'type': 'string',
@@ -30,7 +30,7 @@ const CREATE_LOG_MESSAGE = Merge(MESSAGE, {
       'properties': {
         'level': {
           'type': 'string',
-          'enum': [ 'debug', 'trace' ]
+          'enum': [ 'trace' ]
         }
       },
       'required': [ 'level' ]
@@ -39,7 +39,7 @@ const CREATE_LOG_MESSAGE = Merge(MESSAGE, {
   'required': [ ...MESSAGE.required, 'level', 'logOptions', 'msg' ]
 })
 
-const REGEXP_CREATE_LOG_MESSAGE = new RegExp(`^${Configuration.tests.patterns.prefixBrowser} DEBUG Log.createLog\\(\\.{3}parameters\\) \\{ .{3} \\}.*$`, 'm') // /^\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d\.\d+([+-][0-2]\d:[0-5]\d|Z) DEBUG Log.createLog\(\.{3}parameters\) \{ .{3} \}.*$/m
+const REGEXP_CREATE_LOG_MESSAGE = new RegExp(`^${Configuration.tests.patterns.prefixBrowser} TRACE Log.createLog\\(\\.{3}parameters\\) \\{ .{3} \\}.*$`, 'm') // /^\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d\.\d+([+-][0-2]\d:[0-5]\d|Z) DEBUG Log.createLog\(\.{3}parameters\) \{ .{3} \}.*$/m
 const REGEXP_OBJECT_MESSAGE = new RegExp(`^${Configuration.tests.patterns.prefixBrowser} TRACE MESSAGE\n\n\\{ a\\: 1, b\\: 2, c\\: 3 \\}\n\n$`, 'm')
 
 describe('log', () => {
@@ -92,7 +92,7 @@ describe('log', () => {
       it('should call Pino.call with valid arguments', async () => {
         Assert.ok(await Page.evaluate(() => window.Pino.call.calledWith(window.Log, window.Sinon.match({
           'browser': { 'asObject': true },
-          'level': 'debug'
+          'level': 'trace'
         }))))
       })
 
@@ -108,8 +108,8 @@ describe('log', () => {
         Assert.jsonSchema(messages[0], CREATE_LOG_MESSAGE)
       })
 
-      it('should create a message with logOptions.level \'debug\'', () => {
-        Assert.equal(messages[0].logOptions.level, 'debug')
+      it('should create a message with logOptions.level \'trace\'', () => {
+        Assert.equal(messages[0].logOptions.level, 'trace')
       })
 
       for (let level of Object.entries(Log.levels.values)) {

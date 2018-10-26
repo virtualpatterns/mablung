@@ -124,14 +124,14 @@ Log.createLog = function (...parameters) {
   let defaultLogOptions = null
 
   if (IsNode) {
-    defaultLogOptions = { 'level': 'debug' }
+    defaultLogOptions = { 'level': 'trace' }
   } else {
     defaultLogOptions = {
       'browser': {
         'asObject': true,
         'serialize': true
       },
-      'level': 'debug'
+      'level': 'trace'
     }
   }
 
@@ -144,7 +144,7 @@ Log.createLog = function (...parameters) {
 
   Object.setPrototypeOf(this, log)
 
-  Log.debug(Is.emptyObject(logOptions) ? {} : { 'logOptions': logOptions }, 'Log.createLog(...parameters) { ... }')
+  Log.trace(Is.emptyObject(logOptions) ? {} : { 'logOptions': logOptions }, 'Log.createLog(...parameters) { ... }')
 
 }
 

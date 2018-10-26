@@ -31,7 +31,7 @@ const CREATE_LOG_MESSAGE = Merge(MESSAGE, {
   'properties': {
     'level': {
       'type': 'number',
-      'enum': [ 20 ]
+      'enum': [ 10 ]
     },
     'msg': {
       'type': 'string',
@@ -52,7 +52,7 @@ const CREATE_LOG_MESSAGE = Merge(MESSAGE, {
   'required': [ ...MESSAGE.required, 'level', 'msg', 'logOptions' ]
 })
 
-const REGEXP_CREATE_LOG_MESSAGE = new RegExp(`^${Configuration.tests.patterns.prefixNode} DEBUG Log.createLog\\(\\.{3}parameters\\) \\{ .{3} \\}$`, 'm')
+const REGEXP_CREATE_LOG_MESSAGE = new RegExp(`^${Configuration.tests.patterns.prefixNode} TRACE Log.createLog\\(\\.{3}parameters\\) \\{ .{3} \\}$`, 'm')
 const REGEXP_OBJECT_MESSAGE = new RegExp(`^${Configuration.tests.patterns.prefixNode} TRACE MESSAGE\n\n\\{ a\\: 1, b\\: 2, c\\: 3 \\}\n$`, 'm')
 
 describe('log', () => {
@@ -94,7 +94,7 @@ describe('log', () => {
       })
 
       it('should call Pino with valid arguments', () => {
-        Assert.ok(Pino.call.calledWith(Log, Sinon.match({ 'level': 'debug' }), stream))
+        Assert.ok(Pino.call.calledWith(Log, Sinon.match({ 'level': 'trace' }), stream))
       })
 
       it('should return the prototype', () => {
@@ -109,8 +109,8 @@ describe('log', () => {
         Assert.jsonSchema(messages[0], CREATE_LOG_MESSAGE)
       })
 
-      it('should create a message with logOptions.level \'debug\'', () => {
-        Assert.equal(messages[0].logOptions.level, 'debug')
+      it('should create a message with logOptions.level \'trace\'', () => {
+        Assert.equal(messages[0].logOptions.level, 'trace')
       })
 
       for (let level of Object.entries(Log.levels.values)) {
