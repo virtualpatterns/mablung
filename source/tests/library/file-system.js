@@ -20,6 +20,54 @@ describe('file-system', () => {
 
   }
 
+  describe('accessRequireSync', () => {
+
+    describe('(when a file exists)', () => {
+
+      let data = null
+
+      before(async () => {
+
+        try {
+          await FileSystem.promisedAccess(Configuration.tests.requirePath, FileSystem.F_OK)
+          await FileSystem.promisedUnlink(Configuration.tests.requirePath)
+        } catch (error) {
+          // OK
+        }
+
+        await FileSystem.promisedWriteFile(Configuration.tests.requirePath, `{ "pid": ${Process.pid} }`, { 'encoding': 'utf-8' })
+
+        data = FileSystem.accessRequireSync(Configuration.tests.requirePath, FileSystem.F_OK)
+
+      })
+
+      it('should require a file', () => {
+        Assert.equal(data.pid, Process.pid)
+      })
+
+    })
+
+    describe('(when a file doesn\'t exist)', () => {
+
+      before(async () => {
+
+        try {
+          await FileSystem.promisedAccess(Configuration.tests.requirePath, FileSystem.F_OK)
+          await FileSystem.promisedUnlink(Configuration.tests.requirePath)
+        } catch (error) {
+          // OK
+        }
+
+      })
+
+      it('should be undefined', () => {
+        Assert.ok(Is.undefined(FileSystem.accessRequireSync(Configuration.tests.requirePath, FileSystem.F_OK)))
+      })
+
+    })
+
+  })
+
   describe('promisedAccessRequire', () => {
 
     describe('(when a file exists)', () => {
@@ -41,7 +89,7 @@ describe('file-system', () => {
 
       })
 
-      it('should require a file', async () => {
+      it('should require a file', () => {
         Assert.equal(data.pid, Process.pid)
       })
 

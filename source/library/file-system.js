@@ -37,6 +37,18 @@ if (IsNode) {
     })
   }
 
+  FileSystem.accessRequireSync = function (path, mode) {
+
+    try {
+      FileSystem.accessSync(path, mode)
+      return require(path)
+    }
+    catch (error) {
+      // OK
+    }
+
+  }
+
   FileSystem.whenFileExists = function (timeout, maximumDuration, path) {
     return Process.when(timeout, maximumDuration, (callback) => FileSystem.access(path, FileSystem.F_OK, callback))
   }
@@ -55,18 +67,18 @@ if (IsNode) {
 
   }
 
-  FileSystem.promisedAccess = FileSystem.access // Utilities.promisify(FileSystem.access)
+  FileSystem.promisedAccess = Utilities.promisify(FileSystem.access)
   FileSystem.promisedAccessUnlink = Utilities.promisify(FileSystem.accessUnlink)
   FileSystem.promisedAccessRequire = Utilities.promisify(FileSystem.accessRequire)
-  FileSystem.promisedCopy = FileSystem.copy // Utilities.promisify(FileSystem.copy)
-  FileSystem.promisedMakeDir = FileSystem.mkdir // Utilities.promisify(FileSystem.mkdir)
-  FileSystem.promisedReadDir = FileSystem.readdir // Utilities.promisify(FileSystem.readdir)
-  FileSystem.promisedReadFile = FileSystem.readFile // Utilities.promisify(FileSystem.readFile)
-  FileSystem.promisedRename = FileSystem.rename // Utilities.promisify(FileSystem.rename)
-  FileSystem.promisedStat = FileSystem.stat // Utilities.promisify(FileSystem.stat)
+  FileSystem.promisedCopy = Utilities.promisify(FileSystem.copy)
+  FileSystem.promisedMakeDir = Utilities.promisify(FileSystem.mkdir)
+  FileSystem.promisedReadDir = Utilities.promisify(FileSystem.readdir)
+  FileSystem.promisedReadFile = Utilities.promisify(FileSystem.readFile)
+  FileSystem.promisedRename = Utilities.promisify(FileSystem.rename)
+  FileSystem.promisedStat = Utilities.promisify(FileSystem.stat)
   FileSystem.promisedTouch = Utilities.promisify(FileSystem.touch)
-  FileSystem.promisedUnlink = FileSystem.unlink // Utilities.promisify(FileSystem.unlink)
-  FileSystem.promisedWriteFile = FileSystem.writeFile // Utilities.promisify(FileSystem.writeFile)
+  FileSystem.promisedUnlink = Utilities.promisify(FileSystem.unlink)
+  FileSystem.promisedWriteFile = Utilities.promisify(FileSystem.writeFile)
 
 }
 
