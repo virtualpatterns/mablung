@@ -20,6 +20,54 @@ describe('file-system', () => {
 
   }
 
+  describe('promisedAccessRequire', () => {
+
+    describe('(when a file exists)', () => {
+
+      let data = null
+
+      before(async () => {
+
+        try {
+          await FileSystem.promisedAccess(Configuration.tests.requirePath, FileSystem.F_OK)
+          await FileSystem.promisedUnlink(Configuration.tests.requirePath)
+        } catch (error) {
+          // OK
+        }
+
+        await FileSystem.promisedWriteFile(Configuration.tests.requirePath, `{ "pid": ${Process.pid} }`, { 'encoding': 'utf-8' })
+
+        data = await FileSystem.promisedAccessRequire(Configuration.tests.requirePath, FileSystem.F_OK)
+
+      })
+
+      it('should require a file', async () => {
+        Assert.equal(data.pid, Process.pid)
+      })
+
+    })
+
+    describe('(when a file doesn\'t exist)', () => {
+
+      before(async () => {
+
+        try {
+          await FileSystem.promisedAccess(Configuration.tests.requirePath, FileSystem.F_OK)
+          await FileSystem.promisedUnlink(Configuration.tests.requirePath)
+        } catch (error) {
+          // OK
+        }
+
+      })
+
+      it('should be undefined', async () => {
+        Assert.ok(Is.undefined(await FileSystem.promisedAccessRequire(Configuration.tests.requirePath, FileSystem.F_OK)))
+      })
+
+    })
+
+  })
+
   describe('promisedAccessUnlink', () => {
 
     describe('(when a file exists)', () => {

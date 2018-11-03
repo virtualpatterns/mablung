@@ -17,7 +17,9 @@ Log.createFormattedLog(Process.stdout)
 
 // Log.error(new Error('Error'))
 // Log.info(Log.levels.values, 'Info')
-Log.debug('Debug')
+// Log.debug('Debug')
+
+Log.debug([1,2,3])
 
 // (async () => {
 

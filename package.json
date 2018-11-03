@@ -42,7 +42,7 @@
     "pino-pretty": "^2.2.2",
     "puppeteer": "^1.0.0",
     "restify": "^7.2.1",
-    "sinon": "^6.3.5",
+    "sinon": "^7.1.1",
     "webpack": "^4.20.2",
     "webpack-cli": "^3.1.2"
   },
@@ -50,6 +50,7 @@
     "@pwn/is": "^1.0.2",
     "babel-polyfill": "^6.26.0",
     "detect-node": "^2.0.3",
+    "fs-extra": "^7.0.0",
     "is-relative": "^1.0.0",
     "ncp": "^2.0.0",
     "pino": "^5.7.0",

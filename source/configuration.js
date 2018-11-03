@@ -25,6 +25,7 @@ export default {
     'logPath': `${process.env.HOME}/Library/Logs/mablung/mablung-tests.log`,
     'outPath': `${process.env.HOME}/Library/Logs/mablung/mablung-tests.out`,
     'pidPath': `${process.env.HOME}/Library/Logs/mablung/mablung-tests.pid`,
+    'requirePath': `${process.env.HOME}/Library/Logs/mablung/mablung-tests.json`,
     'whenTimeout': 250,
     'whenDuration': 3000,
     'process': {
