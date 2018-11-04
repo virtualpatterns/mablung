@@ -1,7 +1,4 @@
-// import _FileSystem from 'fs'
-// import _FileSystem from 'fs-extra'
 import IsNode from 'detect-node'
-// import Copy from 'ncp'
 import Touch from 'touch'
 import Utilities from 'util'
 
@@ -14,7 +11,6 @@ const FileSystem = Object.create(IsNode ? require('fs-extra') : {})
 
 if (IsNode) {
 
-  // FileSystem.copy = Copy
   FileSystem.touch = Touch
 
   FileSystem.accessUnlink = function (path, mode, callback) {
@@ -67,18 +63,26 @@ if (IsNode) {
 
   }
 
-  FileSystem.promisedAccess = Utilities.promisify(FileSystem.access)
-  FileSystem.promisedAccessUnlink = Utilities.promisify(FileSystem.accessUnlink)
-  FileSystem.promisedAccessRequire = Utilities.promisify(FileSystem.accessRequire)
-  FileSystem.promisedCopy = Utilities.promisify(FileSystem.copy)
-  FileSystem.promisedMakeDir = Utilities.promisify(FileSystem.mkdir)
-  FileSystem.promisedReadDir = Utilities.promisify(FileSystem.readdir)
-  FileSystem.promisedReadFile = Utilities.promisify(FileSystem.readFile)
-  FileSystem.promisedRename = Utilities.promisify(FileSystem.rename)
-  FileSystem.promisedStat = Utilities.promisify(FileSystem.stat)
-  FileSystem.promisedTouch = Utilities.promisify(FileSystem.touch)
-  FileSystem.promisedUnlink = Utilities.promisify(FileSystem.unlink)
-  FileSystem.promisedWriteFile = Utilities.promisify(FileSystem.writeFile)
+  FileSystem.promisedAccess = Utilities.deprecate(FileSystem.access, 'FileSystem.promisedAccess( ... ) is deprecated. Use FileSystem.access( ... ) instead.')
+
+  FileSystem.accessUnlink = Utilities.promisify(FileSystem.accessUnlink)
+  FileSystem.promisedAccessUnlink = Utilities.deprecate(FileSystem.accessUnlink, 'FileSystem.promisedAccessUnlink( ... ) is deprecated. Use FileSystem.accessUnlink( ... ) instead.')
+
+  FileSystem.accessRequire = Utilities.promisify(FileSystem.accessRequire)
+  FileSystem.promisedAccessRequire = Utilities.deprecate(FileSystem.accessRequire, 'FileSystem.promisedAccessRequire( ... ) is deprecated. Use FileSystem.accessRequire( ... ) instead.')
+
+  FileSystem.promisedCopy = Utilities.deprecate(FileSystem.copy, 'FileSystem.promisedCopy( ... ) is deprecated. Use FileSystem.copy( ... ) instead.')
+  FileSystem.promisedMakeDir = Utilities.deprecate(FileSystem.mkdir, 'FileSystem.promisedMakeDir( ... ) is deprecated. Use FileSystem.mkdir( ... ) instead.')
+  FileSystem.promisedReadDir = Utilities.deprecate(FileSystem.readdir, 'FileSystem.promisedReadDir( ... ) is deprecated. Use FileSystem.readdir( ... ) instead.')
+  FileSystem.promisedReadFile = Utilities.deprecate(FileSystem.readFile, 'FileSystem.promisedReadFile( ... ) is deprecated. Use FileSystem.readFile( ... ) instead.')
+  FileSystem.promisedRename = Utilities.deprecate(FileSystem.rename, 'FileSystem.promisedRename( ... ) is deprecated. Use FileSystem.rename( ... ) instead.') 
+  FileSystem.promisedStat = Utilities.deprecate(FileSystem.stat, 'FileSystem.promisedStat( ... ) is deprecated. Use FileSystem.stat( ... ) instead.')
+
+  FileSystem.touch = Utilities.promisify(FileSystem.touch)
+  FileSystem.promisedTouch = Utilities.deprecate(FileSystem.touch, 'FileSystem.promisedTouch( ... ) is deprecated. Use FileSystem.touch( ... ) instead.')
+
+  FileSystem.promisedUnlink = Utilities.deprecate(FileSystem.unlink, 'FileSystem.promisedUnlink( ... ) is deprecated. Use FileSystem.unlink( ... ) instead.')
+  FileSystem.promisedWriteFile = Utilities.deprecate(FileSystem.writeFile, 'FileSystem.promisedWriteFile( ... ) is deprecated. Use FileSystem.writeFile( ... ) instead.')
 
 }
 

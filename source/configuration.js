@@ -8,7 +8,7 @@ const PATTERN_PID = '\\d+'
 export default {
 
   'process': {
-    'exitTimeout': 5000,
+    'exitTimeout': 5000
   },
 
   'server': {

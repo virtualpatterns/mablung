@@ -1,4 +1,4 @@
-import 'babel-polyfill'
+import '@babel/polyfill'
 import Chai from 'chai'
 import ChaiJSONSchema from 'chai-json-schema'
 

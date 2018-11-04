@@ -46,8 +46,8 @@ describe('process', () => {
       describe('(when the file exists and contains a valid pid)', () => {
 
         before(async () => {
-          await FileSystem.promisedAccessUnlink(Configuration.tests.pidPath, FileSystem.F_OK)
-          await FileSystem.promisedWriteFile(Configuration.tests.pidPath, Process.pid, { 'encoding': 'utf-8' })
+          await FileSystem.accessUnlink(Configuration.tests.pidPath, FileSystem.F_OK)
+          await FileSystem.writeFile(Configuration.tests.pidPath, Process.pid, { 'encoding': 'utf-8' })
         })
 
         it('should return true', () => {
@@ -55,7 +55,7 @@ describe('process', () => {
         })
 
         after(async () => {
-          await FileSystem.promisedUnlink(Configuration.tests.pidPath)
+          await FileSystem.unlink(Configuration.tests.pidPath)
         })
 
       })
@@ -67,7 +67,7 @@ describe('process', () => {
       describe('(when the file doesn\'t exist)', () => {
 
         before(async () => {
-          await FileSystem.promisedAccessUnlink(Configuration.tests.pidPath, FileSystem.F_OK)
+          await FileSystem.accessUnlink(Configuration.tests.pidPath, FileSystem.F_OK)
         })
 
         it('should return false', () => {
@@ -79,8 +79,8 @@ describe('process', () => {
       describe('(when the file exists and contains an invalid pid)', () => {
 
         before(async () => {
-          await FileSystem.promisedAccessUnlink(Configuration.tests.pidPath, FileSystem.F_OK)
-          await FileSystem.promisedWriteFile(Configuration.tests.pidPath, 2^16, { 'encoding': 'utf-8' })
+          await FileSystem.accessUnlink(Configuration.tests.pidPath, FileSystem.F_OK)
+          await FileSystem.writeFile(Configuration.tests.pidPath, 2^16, { 'encoding': 'utf-8' })
         })
 
         it('should return false', () => {
@@ -93,8 +93,8 @@ describe('process', () => {
 
         before(async () => {
 
-          await FileSystem.promisedAccessUnlink(Configuration.tests.pidPath, FileSystem.F_OK)
-          await FileSystem.promisedWriteFile(Configuration.tests.pidPath, 2^16, { 'encoding': 'utf-8' })
+          await FileSystem.accessUnlink(Configuration.tests.pidPath, FileSystem.F_OK)
+          await FileSystem.writeFile(Configuration.tests.pidPath, 2^16, { 'encoding': 'utf-8' })
 
           Process.existsPID(Configuration.tests.pidPath)
 
@@ -103,7 +103,7 @@ describe('process', () => {
         it('should delete the file', async () => {
 
           try {
-            await FileSystem.promisedAccess(Configuration.tests.pidPath, FileSystem.F_OK)
+            await FileSystem.access(Configuration.tests.pidPath, FileSystem.F_OK)
             throw new TestError(`The file ${Path.trim(Configuration.tests.pidPath)} exists.`)
           } catch (error) {
             if (error instanceof TestError) {
@@ -128,7 +128,7 @@ describe('process', () => {
         Sinon.spy(Process, 'createPID')
         Sinon.spy(Process, 'on')
 
-        await FileSystem.promisedAccessUnlink(Configuration.tests.pidPath, FileSystem.F_OK)
+        await FileSystem.accessUnlink(Configuration.tests.pidPath, FileSystem.F_OK)
 
         Process.createPID(Configuration.tests.pidPath)
 
@@ -148,7 +148,7 @@ describe('process', () => {
 
       after(async () => {
 
-        await FileSystem.promisedAccessUnlink(Configuration.tests.pidPath, FileSystem.F_OK)
+        await FileSystem.accessUnlink(Configuration.tests.pidPath, FileSystem.F_OK)
 
         Process.on.restore()
         Process.createPID.restore()
@@ -161,18 +161,18 @@ describe('process', () => {
 
       before(async () => {
 
-        await FileSystem.promisedAccessUnlink(Configuration.tests.pidPath, FileSystem.F_OK)
+        await FileSystem.accessUnlink(Configuration.tests.pidPath, FileSystem.F_OK)
 
         Process.createPID(Configuration.tests.pidPath)
 
       })
 
       it('should create the file', async () => {
-        await FileSystem.promisedAccess(Configuration.tests.pidPath, FileSystem.F_OK)
+        await FileSystem.access(Configuration.tests.pidPath, FileSystem.F_OK)
       })
 
       it('should create the file with a valid pid', async () => {
-        Assert.equal(await FileSystem.promisedReadFile(Configuration.tests.pidPath, { 'encoding': 'utf-8' }), Process.pid)
+        Assert.equal(await FileSystem.readFile(Configuration.tests.pidPath, { 'encoding': 'utf-8' }), Process.pid)
       })
 
       it('should fail if the file exists', () => {
@@ -189,8 +189,8 @@ describe('process', () => {
 
         before(async () => {
 
-          await FileSystem.promisedAccessUnlink(Configuration.tests.process.logPath, FileSystem.F_OK)
-          await FileSystem.promisedAccessUnlink(Configuration.tests.process.pidPath, FileSystem.F_OK)
+          await FileSystem.accessUnlink(Configuration.tests.process.logPath, FileSystem.F_OK)
+          await FileSystem.accessUnlink(Configuration.tests.process.pidPath, FileSystem.F_OK)
 
           childProcess = ChildProcess.fork(Configuration.tests.process.modulePath, [], { 'silent': false })
 
@@ -214,8 +214,8 @@ describe('process', () => {
 
         before(async () => {
 
-          await FileSystem.promisedAccessUnlink(Configuration.tests.process.logPath, FileSystem.F_OK)
-          await FileSystem.promisedAccessUnlink(Configuration.tests.process.pidPath, FileSystem.F_OK)
+          await FileSystem.accessUnlink(Configuration.tests.process.logPath, FileSystem.F_OK)
+          await FileSystem.accessUnlink(Configuration.tests.process.pidPath, FileSystem.F_OK)
 
           let childProcess = ChildProcess.fork(Configuration.tests.process.modulePath, [], { 'silent': false })
 
@@ -241,7 +241,7 @@ describe('process', () => {
 
       before(async () => {
 
-        await FileSystem.promisedAccessUnlink(Configuration.tests.process.pidPath, FileSystem.F_OK)
+        await FileSystem.accessUnlink(Configuration.tests.process.pidPath, FileSystem.F_OK)
 
         ChildProcess.fork(Configuration.tests.process.modulePath, [], { 'silent': true })
 
@@ -260,7 +260,7 @@ describe('process', () => {
     describe('(when the file doesn\'t exist)', () => {
 
       before(async () => {
-        await FileSystem.promisedAccessUnlink(Configuration.tests.process.pidPath, FileSystem.F_OK)
+        await FileSystem.accessUnlink(Configuration.tests.process.pidPath, FileSystem.F_OK)
       })
 
       it('should fail', () => {
@@ -272,8 +272,8 @@ describe('process', () => {
     describe('(when the file exists and contains an invalid pid)', () => {
 
       before(async () => {
-        await FileSystem.promisedAccessUnlink(Configuration.tests.process.pidPath, FileSystem.F_OK)
-        await FileSystem.promisedWriteFile(Configuration.tests.process.pidPath, 2^16, { 'encoding': 'utf-8' })
+        await FileSystem.accessUnlink(Configuration.tests.process.pidPath, FileSystem.F_OK)
+        await FileSystem.writeFile(Configuration.tests.process.pidPath, 2^16, { 'encoding': 'utf-8' })
       })
 
       it('should fail', () => {

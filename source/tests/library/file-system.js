@@ -20,6 +20,56 @@ describe('file-system', () => {
 
   }
 
+  describe('access', () => {
+
+    describe('(when a file exists)', () => {
+
+      it('should succeed', async () => {
+        await FileSystem.access(__filename, FileSystem.F_OK)
+      })
+
+    })
+
+    describe('(when a file doesn\'t exist)', () => {
+
+      it('should fail', async () => {
+
+        try {
+          await FileSystem.access(`${__filename}x`, FileSystem.F_OK)
+          throw new TestError(`The file '${__filename}x' exists.`)
+        }
+        catch (error) {
+          if (error instanceof TestError) {
+            throw error
+          }
+        }
+
+      })
+
+    })
+
+  })
+
+  describe('stat', () => {
+
+    describe('(when called with a directory)', () => {
+
+      it('should return a directory', async () => {
+        Assert.ok((await FileSystem.stat(__dirname)).isDirectory())
+      })
+
+    })
+
+    describe('(when called with a directory and options)', () => {
+
+      it.skip('should return a directory', async () => {
+        Assert.ok((await FileSystem.stat(__dirname, { 'bigint': true })).isDirectory())
+      })
+
+    })
+
+  })
+
   describe('accessRequireSync', () => {
 
     describe('(when a file exists)', () => {
@@ -29,13 +79,13 @@ describe('file-system', () => {
       before(async () => {
 
         try {
-          await FileSystem.promisedAccess(Configuration.tests.requirePath, FileSystem.F_OK)
-          await FileSystem.promisedUnlink(Configuration.tests.requirePath)
+          await FileSystem.access(Configuration.tests.requirePath, FileSystem.F_OK)
+          await FileSystem.unlink(Configuration.tests.requirePath)
         } catch (error) {
           // OK
         }
 
-        await FileSystem.promisedWriteFile(Configuration.tests.requirePath, `{ "pid": ${Process.pid} }`, { 'encoding': 'utf-8' })
+        await FileSystem.writeFile(Configuration.tests.requirePath, `{ "pid": ${Process.pid} }`, { 'encoding': 'utf-8' })
 
         data = FileSystem.accessRequireSync(Configuration.tests.requirePath, FileSystem.F_OK)
 
@@ -52,8 +102,8 @@ describe('file-system', () => {
       before(async () => {
 
         try {
-          await FileSystem.promisedAccess(Configuration.tests.requirePath, FileSystem.F_OK)
-          await FileSystem.promisedUnlink(Configuration.tests.requirePath)
+          await FileSystem.access(Configuration.tests.requirePath, FileSystem.F_OK)
+          await FileSystem.unlink(Configuration.tests.requirePath)
         } catch (error) {
           // OK
         }
@@ -68,7 +118,7 @@ describe('file-system', () => {
 
   })
 
-  describe('promisedAccessRequire', () => {
+  describe('accessRequire', () => {
 
     describe('(when a file exists)', () => {
 
@@ -77,15 +127,15 @@ describe('file-system', () => {
       before(async () => {
 
         try {
-          await FileSystem.promisedAccess(Configuration.tests.requirePath, FileSystem.F_OK)
-          await FileSystem.promisedUnlink(Configuration.tests.requirePath)
+          await FileSystem.access(Configuration.tests.requirePath, FileSystem.F_OK)
+          await FileSystem.unlink(Configuration.tests.requirePath)
         } catch (error) {
           // OK
         }
 
-        await FileSystem.promisedWriteFile(Configuration.tests.requirePath, `{ "pid": ${Process.pid} }`, { 'encoding': 'utf-8' })
+        await FileSystem.writeFile(Configuration.tests.requirePath, `{ "pid": ${Process.pid} }`, { 'encoding': 'utf-8' })
 
-        data = await FileSystem.promisedAccessRequire(Configuration.tests.requirePath, FileSystem.F_OK)
+        data = await FileSystem.accessRequire(Configuration.tests.requirePath, FileSystem.F_OK)
 
       })
 
@@ -100,8 +150,8 @@ describe('file-system', () => {
       before(async () => {
 
         try {
-          await FileSystem.promisedAccess(Configuration.tests.requirePath, FileSystem.F_OK)
-          await FileSystem.promisedUnlink(Configuration.tests.requirePath)
+          await FileSystem.access(Configuration.tests.requirePath, FileSystem.F_OK)
+          await FileSystem.unlink(Configuration.tests.requirePath)
         } catch (error) {
           // OK
         }
@@ -109,35 +159,35 @@ describe('file-system', () => {
       })
 
       it('should be undefined', async () => {
-        Assert.ok(Is.undefined(await FileSystem.promisedAccessRequire(Configuration.tests.requirePath, FileSystem.F_OK)))
+        Assert.ok(Is.undefined(await FileSystem.accessRequire(Configuration.tests.requirePath, FileSystem.F_OK)))
       })
 
     })
 
   })
 
-  describe('promisedAccessUnlink', () => {
+  describe('accessUnlink', () => {
 
     describe('(when a file exists)', () => {
 
       before(async () => {
 
         try {
-          await FileSystem.promisedAccess(Configuration.tests.outPath, FileSystem.F_OK)
-          await FileSystem.promisedUnlink(Configuration.tests.outPath)
+          await FileSystem.access(Configuration.tests.outPath, FileSystem.F_OK)
+          await FileSystem.unlink(Configuration.tests.outPath)
         } catch (error) {
           // OK
         }
 
-        await FileSystem.promisedWriteFile(Configuration.tests.outPath, Process.pid, { 'encoding': 'utf-8' })
-        await FileSystem.promisedAccessUnlink(Configuration.tests.outPath, FileSystem.F_OK)
+        await FileSystem.writeFile(Configuration.tests.outPath, Process.pid, { 'encoding': 'utf-8' })
+        await FileSystem.accessUnlink(Configuration.tests.outPath, FileSystem.F_OK)
 
       })
 
       it('should delete a file', async () => {
 
         try {
-          await FileSystem.promisedAccess(Configuration.tests.outPath, FileSystem.F_OK)
+          await FileSystem.access(Configuration.tests.outPath, FileSystem.F_OK)
           throw new TestError(`The file '${Path.trim(Configuration.tests.outPath)}' exists.`)
         } catch (error) {
           if (error instanceof TestError) {
@@ -154,8 +204,8 @@ describe('file-system', () => {
       before(async () => {
 
         try {
-          await FileSystem.promisedAccess(Configuration.tests.outPath, FileSystem.F_OK)
-          await FileSystem.promisedUnlink(Configuration.tests.outPath)
+          await FileSystem.access(Configuration.tests.outPath, FileSystem.F_OK)
+          await FileSystem.unlink(Configuration.tests.outPath)
         } catch (error) {
           // OK
         }
@@ -163,7 +213,7 @@ describe('file-system', () => {
       })
 
       it('should succeed', async () => {
-        await FileSystem.promisedAccessUnlink(Configuration.tests.outPath, FileSystem.F_OK)
+        await FileSystem.accessUnlink(Configuration.tests.outPath, FileSystem.F_OK)
       })
 
     })
@@ -175,8 +225,8 @@ describe('file-system', () => {
     describe('(when a file exists)', () => {
 
       before(async () => {
-        await FileSystem.promisedAccessUnlink(Configuration.tests.outPath, FileSystem.F_OK)
-        await FileSystem.promisedWriteFile(Configuration.tests.outPath, Process.pid, { 'encoding': 'utf-8' })
+        await FileSystem.accessUnlink(Configuration.tests.outPath, FileSystem.F_OK)
+        await FileSystem.writeFile(Configuration.tests.outPath, Process.pid, { 'encoding': 'utf-8' })
       })
 
       it('should resolve', async () => {
@@ -184,7 +234,7 @@ describe('file-system', () => {
       })
 
       after(async () => {
-        await FileSystem.promisedUnlink(Configuration.tests.outPath)
+        await FileSystem.unlink(Configuration.tests.outPath)
       })
 
     })
@@ -192,7 +242,7 @@ describe('file-system', () => {
     describe('(when a file doesn\'t exist)', () => {
 
       before(async () => {
-        await FileSystem.promisedAccessUnlink(Configuration.tests.outPath, FileSystem.F_OK)
+        await FileSystem.accessUnlink(Configuration.tests.outPath, FileSystem.F_OK)
       })
 
       it('should reject', async () => {
@@ -217,7 +267,7 @@ describe('file-system', () => {
     describe('(when a file doesn\'t exist)', () => {
 
       before(async () => {
-        await FileSystem.promisedAccessUnlink(Configuration.tests.outPath, FileSystem.F_OK)
+        await FileSystem.accessUnlink(Configuration.tests.outPath, FileSystem.F_OK)
       })
 
       it('should resolve the promise', async () => {
@@ -229,8 +279,8 @@ describe('file-system', () => {
     describe('(when a file exists)', () => {
 
       before(async () => {
-        await FileSystem.promisedAccessUnlink(Configuration.tests.outPath, FileSystem.F_OK)
-        await FileSystem.promisedWriteFile(Configuration.tests.outPath, Process.pid, { 'encoding': 'utf-8' })
+        await FileSystem.accessUnlink(Configuration.tests.outPath, FileSystem.F_OK)
+        await FileSystem.writeFile(Configuration.tests.outPath, Process.pid, { 'encoding': 'utf-8' })
       })
 
       it('should reject', async () => {
@@ -247,7 +297,7 @@ describe('file-system', () => {
       })
 
       after(async () => {
-        await FileSystem.promisedAccessUnlink(Configuration.tests.outPath, FileSystem.F_OK)
+        await FileSystem.accessUnlink(Configuration.tests.outPath, FileSystem.F_OK)
       })
 
     })

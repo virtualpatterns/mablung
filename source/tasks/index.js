@@ -1,4 +1,4 @@
-import 'babel-polyfill'
+import '@babel/polyfill'
 import Jake from 'jake'
 
 import Configuration from '../configuration'
@@ -19,9 +19,9 @@ task('lint', [], { 'async': true }, () => {
 desc('Build files')
 task('build', [ 'clean', 'lint' ], { 'async': true }, () => {
   Jake.exec([
-    ...([ 'library', 'sandbox', 'server', 'tests' ].map((folderName) => `babel source/${folderName} --copy-files --out-dir distributables/${folderName} --quiet --source-maps`)),
-    ...([ 'index.js', 'webpack.configuration.js' ].map((fileName) => `babel source/${fileName} --out-file distributables/${fileName} --quiet --source-maps`))
-  ], { 'printStderr': true, 'printStdout': true }, () => complete())
+    ...([ 'library', 'sandbox', 'server', 'tests' ].map((folderName) => `babel  --config-file ./distributables/babel.configuration source/${folderName} --copy-files --out-dir distributables/${folderName} --source-maps`)),
+    ...([ 'index.js', 'webpack.configuration.js' ].map((fileName) => `babel  --config-file ./distributables/babel.configuration source/${fileName} --out-file distributables/${fileName} --source-maps`))
+  ], { 'printStderr': true, 'printStdout': false }, () => complete())
 })
 
 desc('Bundle files')

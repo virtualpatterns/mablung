@@ -1,11 +1,6 @@
-import JSON5 from 'json5'
 import WebPack from 'webpack'
 
-import { FileSystem } from './index'
-
-const BabelRC = JSON5.parse(FileSystem.readFileSync(`${__dirname}/../.babelrc`, { 'encoding': 'utf-8' }))
-
-module.exports = {
+export default {
   'devtool': 'source-map',
   'entry': `${process.cwd()}/source/www/scripts/index.js`,
   'mode': 'none',
@@ -16,7 +11,16 @@ module.exports = {
         'exclude': /(node_modules|distributables)/,
         'use': {
           'loader': 'babel-loader',
-          'options': BabelRC
+          'options': { 
+            'presets': [
+              [ 
+                '@babel/env',
+                {
+                  'targets': '> 0.25%, not dead'
+                }
+              ]
+            ] 
+          }
         }
       }
     ]
